@@ -428,7 +428,7 @@
 
       const avatar = document.createElement('img');
       avatar.className = 'comment-avatar';
-      avatar.src = `https://avatars.dicebear.com/api/pixel-art/${encodeURIComponent(comment.username)}.svg`;
+      avatar.src = `https://api.dicebear.com/6.x/identicon/svg?seed=${encodeURIComponent(comment.username)}`;
       avatar.alt = '头像';
       headerDiv.appendChild(avatar);
 
@@ -493,28 +493,25 @@
         comment.replies.forEach((rep, repIndex) => {
           const repDiv = document.createElement('div');
           repDiv.className = 'comment-item';
-          repDiv.style.backgroundColor = '#fff0f0';
-          repDiv.style.marginBottom = '18px';
 
-          // 回复头部
           const repHeader = document.createElement('div');
           repHeader.className = 'comment-header';
 
           const repAvatar = document.createElement('img');
           repAvatar.className = 'comment-avatar';
-          repAvatar.src = `https://avatars.dicebear.com/api/pixel-art/${encodeURIComponent(rep.username)}.svg`;
-          repAvatar.alt = '头像';
+          repAvatar.src = `https://api.dicebear.com/6.x/identicon/svg?seed=${encodeURIComponent(rep.username)}`;
+          repAvatar.alt = '回复头像';
           repHeader.appendChild(repAvatar);
 
-          const repUsernameSpan = document.createElement('span');
-          repUsernameSpan.className = 'comment-username';
-          repUsernameSpan.textContent = rep.username;
-          repHeader.appendChild(repUsernameSpan);
+          const repUsername = document.createElement('span');
+          repUsername.className = 'comment-username';
+          repUsername.textContent = rep.username;
+          repHeader.appendChild(repUsername);
 
-          const repTimeSpan = document.createElement('span');
-          repTimeSpan.className = 'comment-time';
-          repTimeSpan.textContent = formatTimestamp(rep.timestamp);
-          repHeader.appendChild(repTimeSpan);
+          const repTime = document.createElement('span');
+          repTime.className = 'comment-time';
+          repTime.textContent = formatTimestamp(rep.timestamp);
+          repHeader.appendChild(repTime);
 
           repDiv.appendChild(repHeader);
 
@@ -523,6 +520,7 @@
           repText.textContent = rep.text;
           repDiv.appendChild(repText);
 
+          // 回复的删除按钮
           const repActions = document.createElement('div');
           repActions.className = 'comment-actions';
 
@@ -539,55 +537,54 @@
           repActions.appendChild(repDelBtn);
 
           repDiv.appendChild(repActions);
+
           repliesDiv.appendChild(repDiv);
         });
       }
 
-      // 回复输入框和提交按钮
+      // 回复输入框及提交按钮（默认隐藏）
       const replyInput = document.createElement('textarea');
       replyInput.className = 'reply-input';
-      replyInput.placeholder = '写回复...';
+      replyInput.placeholder = '回复内容...';
 
-      const replyUsernameInput = document.createElement('input');
-      replyUsernameInput.type = 'text';
-      replyUsernameInput.placeholder = '回复用户名（必填）';
-      replyUsernameInput.className = 'reply-username-input';
-
-      const replySubmitBtn = document.createElement('button');
-      replySubmitBtn.className = 'reply-submit-btn';
-      replySubmitBtn.textContent = '提交回复';
+      const replySubmit = document.createElement('button');
+      replySubmit.className = 'reply-submit-btn';
+      replySubmit.textContent = '提交回复';
 
       div.appendChild(replyInput);
-      div.appendChild(replyUsernameInput);
-      div.appendChild(replySubmitBtn);
+      div.appendChild(replySubmit);
 
+      // 点击回复按钮显示/隐藏回复输入框
       replyBtn.onclick = () => {
-        const isVisible = replyInput.style.display === 'block';
-        replyInput.style.display = isVisible ? 'none' : 'block';
-        replySubmitBtn.style.display = isVisible ? 'none' : 'inline-block';
-        replyUsernameInput.style.display = isVisible ? 'none' : 'block';
-        if (!isVisible) {
+        if (replyInput.style.display === 'block') {
+          replyInput.style.display = 'none';
+          replySubmit.style.display = 'none';
+          replyInput.value = '';
+        } else {
+          replyInput.style.display = 'block';
+          replySubmit.style.display = 'inline-block';
           replyInput.focus();
         }
       };
 
-      replySubmitBtn.onclick = () => {
-        const val = replyInput.value.trim();
-        const usernameVal = replyUsernameInput.value.trim();
-        if (!val) {
-          alert('回复不能为空哦~');
+      // 提交回复事件
+      replySubmit.onclick = () => {
+        const replyText = replyInput.value.trim();
+        if (!replyText) {
+          alert('回复不能为空！');
+          replyInput.focus();
           return;
         }
-        if (!usernameVal) {
-          alert('回复用户名不能为空哦~');
-          return;
-        }
-        comment.replies = comment.replies || [];
+        // 默认回复用户名用 "匿名"
+        const replyUsername = prompt('请输入你的用户名（回复者）', '匿名') || '匿名';
+
+        if (!comment.replies) comment.replies = [];
         comment.replies.push({
-          text: val,
-          username: usernameVal,
-          timestamp: Date.now(),
+          username: replyUsername,
+          text: replyText,
+          timestamp: Date.now()
         });
+
         saveComments();
         renderComments();
       };
@@ -600,29 +597,37 @@
     }
 
     submitBtn.addEventListener('click', () => {
-      const text = commentInput.value.trim();
       const username = usernameInput.value.trim();
+      const text = commentInput.value.trim();
+
       if (!username) {
         alert('请输入用户名');
+        usernameInput.focus();
         return;
       }
       if (!text) {
-        alert('留言不能为空哦~');
+        alert('请输入留言内容');
+        commentInput.focus();
         return;
       }
+
       comments.unshift({
         username,
         text,
-        likes: 0,
         timestamp: Date.now(),
+        likes: 0,
         replies: []
       });
+
       saveComments();
       renderComments();
+
+      // 清空输入框
+      usernameInput.value = '';
       commentInput.value = '';
-      // 保留用户名方便多次留言
     });
 
+    // 首次加载渲染
     renderComments();
   </script>
 </body>
