@@ -2,69 +2,362 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8" />
-  <title>Cyn's Web - 留言区升级版</title>
+  <title>Cyn's Web - 留言区带头像</title>
   <style>
-    /* 之前的样式省略，只写新增或改动的部分 */
-    .comment-item {
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      background: linear-gradient(135deg, #f0f4ff 0%, #d9e4ff 100%);
+      font-family: "PingFang SC", "Helvetica Neue", Helvetica, Arial, sans-serif;
+      color: #333;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      line-height: 1.6;
+    }
+    .navbar {
+      background-color: #fff;
+      border-bottom: 1px solid #c8d0e7;
+      padding: 20px 32px;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.07);
+    }
+    .navbar h1 {
+      margin: 0;
+      font-size: 28px;
+      font-weight: 700;
+      color: #1a1a1a;
+      cursor: pointer;
+      user-select: none;
+      transition: color 0.5s ease, text-shadow 0.5s ease;
+      letter-spacing: 1.5px;
+    }
+    .navbar h1.animate {
+      color: #ff6f61;
+      text-shadow: 0 0 14px #ff6f61;
+    }
+    .main {
+      max-width: 720px;
+      margin: 60px auto 100px auto;
+      background-color: #ffffffdd;
+      padding: 40px 44px;
+      border-radius: 18px;
+      box-shadow: 0 12px 32px rgba(51, 85, 138, 0.18);
+      backdrop-filter: saturate(180%) blur(10px);
+      border: 1px solid rgba(200,220,255,0.5);
+    }
+    .main p {
+      font-size: 18px;
+      color: #4a4a4a;
+      user-select: text;
+      margin-bottom: 32px;
+    }
+    .main img {
+      width: 100%;
+      border-radius: 14px;
+      margin-top: 26px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+      transition: transform 0.3s ease;
+      cursor: pointer;
+    }
+    .main img:hover {
+      transform: scale(1.05);
+    }
+
+    .comment-section {
+      margin-top: 60px;
+    }
+    .comment-section h3 {
+      margin-bottom: 24px;
+      font-weight: 700;
+      color: #3c3c3c;
+      font-size: 26px;
+      letter-spacing: 0.04em;
+      border-left: 6px solid #ff6f61;
+      padding-left: 14px;
+      user-select: none;
+    }
+
+    .input-row {
       display: flex;
-      background: #fff;
-      padding: 14px 18px;
-      border-radius: 12px;
+      gap: 16px;
       margin-bottom: 18px;
-      box-shadow: 0 3px 10px rgba(255,111,97,0.12);
+    }
+    .input-row input {
+      flex: 1;
+      padding: 14px 18px;
+      font-size: 17px;
+      border: 2.5px solid #d0d7ff;
+      border-radius: 10px;
+      box-shadow: inset 0 2px 8px rgba(200,210,255,0.6);
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+      font-family: inherit;
+      outline-offset: 2px;
+      outline-color: transparent;
+      outline-style: solid;
+      user-select: text;
+      font-weight: 500;
+      letter-spacing: 0.03em;
+    }
+    .input-row input:focus {
+      border-color: #ff6f61;
+      box-shadow: 0 0 14px #ff6f61bb;
+      outline-color: #ff6f61cc;
+    }
+
+    .comment-input {
+      width: 100%;
+      min-height: 110px;
+      resize: vertical;
+      padding: 16px 18px;
+      font-size: 16px;
+      border: 2.5px solid #d0d7ff;
+      border-radius: 10px;
+      box-shadow: inset 0 2px 8px rgba(200,210,255,0.6);
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+      font-family: inherit;
+      outline-offset: 2px;
+      outline-color: transparent;
+      outline-style: solid;
+      user-select: text;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+    }
+    .comment-input:focus {
+      border-color: #ff6f61;
+      box-shadow: 0 0 14px #ff6f61bb;
+      outline-color: #ff6f61cc;
+    }
+
+    .btn-submit {
+      margin-top: 18px;
+      background-color: #ff6f61;
+      color: white;
+      border: none;
+      padding: 14px 30px;
+      font-size: 16px;
+      font-weight: 700;
+      border-radius: 28px;
+      cursor: pointer;
+      transition: background-color 0.3s ease, box-shadow 0.3s ease;
+      box-shadow: 0 6px 16px #ff6f6133;
+      user-select: none;
+      letter-spacing: 0.03em;
+      display: block;
+      margin-left: auto;
+    }
+    .btn-submit:hover {
+      background-color: #e0584d;
+      box-shadow: 0 8px 20px #e0584d99;
+    }
+
+    .comments-list {
+      margin-top: 32px;
+      max-height: 500px;
+      overflow-y: auto;
+      border-top: 3px solid #ff6f61;
+      padding-top: 22px;
+      scrollbar-width: thin;
+      scrollbar-color: #ff6f61 #f0f4ff;
+    }
+    .comments-list::-webkit-scrollbar {
+      width: 11px;
+    }
+    .comments-list::-webkit-scrollbar-track {
+      background: #f0f4ff;
+      border-radius: 8px;
+    }
+    .comments-list::-webkit-scrollbar-thumb {
+      background-color: #ff6f61dd;
+      border-radius: 8px;
+      border: 3px solid #f0f4ff;
+    }
+
+    .comment-item {
+      background: #fff;
+      padding: 20px 26px;
+      border-radius: 16px;
+      margin-bottom: 24px;
+      box-shadow: 0 5px 16px rgba(255,111,97,0.15);
       word-break: break-word;
       position: relative;
       transition: box-shadow 0.3s ease;
+      font-size: 16px;
+      line-height: 1.5;
     }
     .comment-item:hover {
-      box-shadow: 0 6px 16px rgba(255,111,97,0.3);
+      box-shadow: 0 10px 28px rgba(255,111,97,0.35);
+    }
+
+    .comment-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 14px;
     }
     .comment-avatar {
-      width: 48px;
-      height: 48px;
-      border-radius: 50%;
-      margin-right: 14px;
+      width: 50px;
+      height: 50px;
+      border-radius: 12px;
+      margin-right: 16px;
       flex-shrink: 0;
+      background-color: #eee;
       object-fit: cover;
       border: 2px solid #ff6f61;
+      transition: transform 0.2s ease;
     }
-    .comment-content {
-      flex: 1;
+    .comment-avatar:hover {
+      transform: scale(1.1);
     }
-    .comment-text {
-      margin-bottom: 8px;
-      white-space: pre-wrap;
-      font-size: 15px;
-      color: #3d3d3d;
+    .comment-username {
+      font-weight: 700;
+      color: #ff6f61;
+      font-size: 18px;
+      user-select: text;
+      letter-spacing: 0.04em;
     }
-    .comment-meta {
-      font-size: 12px;
-      color: #aaa;
-      margin-bottom: 6px;
-    }
-    /* 排序按钮 */
-    .sort-buttons {
-      margin-bottom: 18px;
+    .comment-time {
+      margin-left: auto;
+      font-size: 13px;
+      color: #999;
       user-select: none;
+      font-weight: 500;
     }
-    .sort-buttons button {
-      background-color: #ff6f61;
+
+    .comment-text {
+      font-size: 16px;
+      color: #3d3d3d;
+      white-space: pre-wrap;
+      user-select: text;
+      padding-left: 4px;
+      letter-spacing: 0.015em;
+    }
+
+    .comment-actions {
+      margin-top: 16px;
+      font-size: 15px;
+      color: #888;
+      user-select: none;
+      display: flex;
+      gap: 18px;
+    }
+    .comment-actions button {
+      background: none;
       border: none;
-      color: white;
-      padding: 8px 14px;
-      margin-right: 10px;
-      border-radius: 20px;
+      color: #888;
       cursor: pointer;
-      font-weight: 600;
-      transition: background-color 0.3s ease;
+      padding: 6px 12px;
+      border-radius: 8px;
+      transition: background-color 0.25s ease, color 0.25s ease;
+      font-weight: 700;
+      user-select: none;
+      font-size: 15px;
+      letter-spacing: 0.02em;
     }
-    .sort-buttons button.active, .sort-buttons button:hover {
+    .comment-actions button:hover {
+      color: #ff6f61;
+      background-color: #ffe6e3;
+    }
+
+    .comment-replies {
+      margin-top: 20px;
+      margin-left: 68px;
+      border-left: 4px solid #ffd6d1;
+      padding-left: 20px;
+    }
+    .comment-replies .comment-item {
+      background: #fff0f0;
+      box-shadow: 0 3px 10px rgba(255,111,97,0.20);
+      margin-bottom: 18px;
+      font-size: 15px;
+      padding: 16px 20px;
+      border-radius: 14px;
+      line-height: 1.4;
+    }
+
+    .reply-input {
+      width: 100%;
+      min-height: 54px;
+      resize: vertical;
+      padding: 12px 14px;
+      font-size: 15px;
+      border: 2px solid #d0d7ff;
+      border-radius: 10px;
+      box-shadow: inset 0 2px 6px rgba(200,210,255,0.5);
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+      font-family: inherit;
+      outline-offset: 2px;
+      outline-color: transparent;
+      outline-style: solid;
+      margin-top: 12px;
+      display: none;
+      user-select: text;
+      font-weight: 500;
+    }
+    .reply-input:focus {
+      border-color: #ff6f61;
+      box-shadow: 0 0 12px #ff6f61aa;
+      outline-color: #ff6f61cc;
+    }
+    .reply-submit-btn {
+      background-color: #ff6f61;
+      color: white;
+      border: none;
+      padding: 10px 26px;
+      font-size: 15px;
+      font-weight: 700;
+      border-radius: 22px;
+      cursor: pointer;
+      margin-top: 10px;
+      display: none;
+      user-select: none;
+      transition: background-color 0.3s ease, box-shadow 0.3s ease;
+      letter-spacing: 0.02em;
+    }
+    .reply-submit-btn:hover {
       background-color: #e0584d;
-      box-shadow: 0 5px 14px #e0584dbb;
+      box-shadow: 0 7px 18px #e0584dbb;
+    }
+
+    /* 回复用户名输入 */
+    .reply-username-input {
+      margin-top: 8px;
+      padding: 10px 14px;
+      width: 100%;
+      border-radius: 10px;
+      border: 2px solid #d0d7ff;
+      font-size: 15px;
+      font-weight: 500;
+      outline: none;
+      display: none;
+      box-shadow: inset 0 2px 6px rgba(200,210,255,0.5);
+      user-select: text;
+      letter-spacing: 0.02em;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+    .reply-username-input:focus {
+      border-color: #ff6f61;
+      box-shadow: 0 0 12px #ff6f61aa;
+      outline-color: #ff6f61cc;
+    }
+
+    .footer {
+      background-color: #f0f4ff;
+      color: #999;
+      font-size: 14px;
+      text-align: center;
+      padding: 28px 14px;
+      border-top: 1px solid #c8d0e7;
+      margin-top: 100px;
+      user-select: none;
+      letter-spacing: 0.04em;
     }
   </style>
 </head>
 <body>
+
   <div class="navbar">
     <h1 id="title">Cyn's 微博页</h1>
   </div>
@@ -78,15 +371,10 @@
 
     <div class="comment-section">
       <h3>留言区</h3>
-      
-      <!-- 排序按钮 -->
-      <div class="sort-buttons">
-        <button id="sortTimeBtn" class="active">按时间排序</button>
-        <button id="sortLikeBtn">按点赞排序</button>
+      <div class="input-row">
+        <input type="text" id="usernameInput" placeholder="请输入用户名（必填）" maxlength="15" />
       </div>
-
       <textarea id="commentInput" class="comment-input" placeholder="写点什么吧..."></textarea>
-      <input type="file" id="avatarInput" accept="image/*" style="margin-top: 10px;" />
       <button class="btn-submit" id="submitBtn">提交留言</button>
 
       <div id="commentsList" class="comments-list"></div>
@@ -107,33 +395,26 @@
 
     const submitBtn = document.getElementById('submitBtn');
     const commentInput = document.getElementById('commentInput');
-    const avatarInput = document.getElementById('avatarInput');
+    const usernameInput = document.getElementById('usernameInput');
     const commentsList = document.getElementById('commentsList');
-    const sortTimeBtn = document.getElementById('sortTimeBtn');
-    const sortLikeBtn = document.getElementById('sortLikeBtn');
 
     let comments = JSON.parse(localStorage.getItem('comments') || '[]');
-    let currentSort = 'time'; // 默认按时间排序
 
-    // 默认头像URL（你可以换成你喜欢的）
-    const defaultAvatar = 'https://i.pravatar.cc/48?u=default';
-
-    function formatDate(timestamp) {
-      const d = new Date(timestamp);
-      return d.toLocaleString('zh-CN', { hour12: false });
+    function formatTimestamp(time) {
+      const now = Date.now();
+      const diff = now - time;
+      if (diff < 60000) return '刚刚';
+      if (diff < 3600000) return Math.floor(diff / 60000) + '分钟前';
+      if (diff < 86400000) return Math.floor(diff / 3600000) + '小时前';
+      const date = new Date(time);
+      return date.toLocaleString();
     }
 
     function renderComments() {
-      // 根据排序规则排序
-      if(currentSort === 'time') {
-        comments.sort((a, b) => b.timestamp - a.timestamp);
-      } else if(currentSort === 'likes') {
-        comments.sort((a, b) => (b.likes || 0) - (a.likes || 0));
-      }
-
       commentsList.innerHTML = '';
       comments.forEach((comment, index) => {
-        commentsList.appendChild(createCommentElement(comment, index));
+        const commentDiv = createCommentElement(comment, index);
+        commentsList.appendChild(commentDiv);
       });
     }
 
@@ -141,34 +422,38 @@
       const div = document.createElement('div');
       div.className = 'comment-item';
 
-      // 头像
+      // 头部：头像 + 用户名 + 时间戳
+      const headerDiv = document.createElement('div');
+      headerDiv.className = 'comment-header';
+
       const avatar = document.createElement('img');
       avatar.className = 'comment-avatar';
-      avatar.src = comment.avatar || defaultAvatar;
-      avatar.alt = '用户头像';
-      div.appendChild(avatar);
+      avatar.src = `https://avatars.dicebear.com/api/pixel-art/${encodeURIComponent(comment.username)}.svg`;
+      avatar.alt = '头像';
+      headerDiv.appendChild(avatar);
 
-      // 内容区
-      const contentDiv = document.createElement('div');
-      contentDiv.className = 'comment-content';
+      const usernameSpan = document.createElement('span');
+      usernameSpan.className = 'comment-username';
+      usernameSpan.textContent = comment.username;
+      headerDiv.appendChild(usernameSpan);
 
-      // 时间戳
-      const metaDiv = document.createElement('div');
-      metaDiv.className = 'comment-meta';
-      metaDiv.textContent = formatDate(comment.timestamp || Date.now());
-      contentDiv.appendChild(metaDiv);
+      const timeSpan = document.createElement('span');
+      timeSpan.className = 'comment-time';
+      timeSpan.textContent = formatTimestamp(comment.timestamp);
+      headerDiv.appendChild(timeSpan);
+
+      div.appendChild(headerDiv);
 
       // 留言内容
       const textDiv = document.createElement('div');
       textDiv.className = 'comment-text';
       textDiv.textContent = comment.text;
-      contentDiv.appendChild(textDiv);
+      div.appendChild(textDiv);
 
-      // 操作区
+      // 操作按钮
       const actionsDiv = document.createElement('div');
       actionsDiv.className = 'comment-actions';
 
-      // 点赞按钮
       const likeBtn = document.createElement('button');
       likeBtn.textContent = `👍 ${comment.likes || 0}`;
       likeBtn.title = '点赞';
@@ -179,18 +464,16 @@
       };
       actionsDiv.appendChild(likeBtn);
 
-      // 回复按钮（暂时无回复功能，后续可扩展）
-      // const replyBtn = document.createElement('button');
-      // replyBtn.textContent = '回复';
-      // replyBtn.title = '回复这条留言';
-      // actionsDiv.appendChild(replyBtn);
+      const replyBtn = document.createElement('button');
+      replyBtn.textContent = '回复';
+      replyBtn.title = '回复这条留言';
+      actionsDiv.appendChild(replyBtn);
 
-      // 删除按钮
       const delBtn = document.createElement('button');
       delBtn.textContent = '删除';
       delBtn.title = '删除这条留言';
       delBtn.onclick = () => {
-        if (confirm('确认删除这条留言吗？')) {
+        if(confirm('确认删除这条留言吗？')) {
           comments.splice(index, 1);
           saveComments();
           renderComments();
@@ -198,9 +481,116 @@
       };
       actionsDiv.appendChild(delBtn);
 
-      contentDiv.appendChild(actionsDiv);
+      div.appendChild(actionsDiv);
 
-      div.appendChild(contentDiv);
+      // 回复区域
+      const repliesDiv = document.createElement('div');
+      repliesDiv.className = 'comment-replies';
+      div.appendChild(repliesDiv);
+
+      // 渲染回复
+      if (comment.replies && comment.replies.length > 0) {
+        comment.replies.forEach((rep, repIndex) => {
+          const repDiv = document.createElement('div');
+          repDiv.className = 'comment-item';
+          repDiv.style.backgroundColor = '#fff0f0';
+          repDiv.style.marginBottom = '18px';
+
+          // 回复头部
+          const repHeader = document.createElement('div');
+          repHeader.className = 'comment-header';
+
+          const repAvatar = document.createElement('img');
+          repAvatar.className = 'comment-avatar';
+          repAvatar.src = `https://avatars.dicebear.com/api/pixel-art/${encodeURIComponent(rep.username)}.svg`;
+          repAvatar.alt = '头像';
+          repHeader.appendChild(repAvatar);
+
+          const repUsernameSpan = document.createElement('span');
+          repUsernameSpan.className = 'comment-username';
+          repUsernameSpan.textContent = rep.username;
+          repHeader.appendChild(repUsernameSpan);
+
+          const repTimeSpan = document.createElement('span');
+          repTimeSpan.className = 'comment-time';
+          repTimeSpan.textContent = formatTimestamp(rep.timestamp);
+          repHeader.appendChild(repTimeSpan);
+
+          repDiv.appendChild(repHeader);
+
+          const repText = document.createElement('div');
+          repText.className = 'comment-text';
+          repText.textContent = rep.text;
+          repDiv.appendChild(repText);
+
+          const repActions = document.createElement('div');
+          repActions.className = 'comment-actions';
+
+          const repDelBtn = document.createElement('button');
+          repDelBtn.textContent = '删除回复';
+          repDelBtn.title = '删除这条回复';
+          repDelBtn.onclick = () => {
+            if(confirm('确认删除这条回复吗？')) {
+              comment.replies.splice(repIndex, 1);
+              saveComments();
+              renderComments();
+            }
+          };
+          repActions.appendChild(repDelBtn);
+
+          repDiv.appendChild(repActions);
+          repliesDiv.appendChild(repDiv);
+        });
+      }
+
+      // 回复输入框和提交按钮
+      const replyInput = document.createElement('textarea');
+      replyInput.className = 'reply-input';
+      replyInput.placeholder = '写回复...';
+
+      const replyUsernameInput = document.createElement('input');
+      replyUsernameInput.type = 'text';
+      replyUsernameInput.placeholder = '回复用户名（必填）';
+      replyUsernameInput.className = 'reply-username-input';
+
+      const replySubmitBtn = document.createElement('button');
+      replySubmitBtn.className = 'reply-submit-btn';
+      replySubmitBtn.textContent = '提交回复';
+
+      div.appendChild(replyInput);
+      div.appendChild(replyUsernameInput);
+      div.appendChild(replySubmitBtn);
+
+      replyBtn.onclick = () => {
+        const isVisible = replyInput.style.display === 'block';
+        replyInput.style.display = isVisible ? 'none' : 'block';
+        replySubmitBtn.style.display = isVisible ? 'none' : 'inline-block';
+        replyUsernameInput.style.display = isVisible ? 'none' : 'block';
+        if (!isVisible) {
+          replyInput.focus();
+        }
+      };
+
+      replySubmitBtn.onclick = () => {
+        const val = replyInput.value.trim();
+        const usernameVal = replyUsernameInput.value.trim();
+        if (!val) {
+          alert('回复不能为空哦~');
+          return;
+        }
+        if (!usernameVal) {
+          alert('回复用户名不能为空哦~');
+          return;
+        }
+        comment.replies = comment.replies || [];
+        comment.replies.push({
+          text: val,
+          username: usernameVal,
+          timestamp: Date.now(),
+        });
+        saveComments();
+        renderComments();
+      };
 
       return div;
     }
@@ -211,48 +601,26 @@
 
     submitBtn.addEventListener('click', () => {
       const text = commentInput.value.trim();
+      const username = usernameInput.value.trim();
+      if (!username) {
+        alert('请输入用户名');
+        return;
+      }
       if (!text) {
         alert('留言不能为空哦~');
         return;
       }
-      // 读取上传头像（FileReader）
-      const file = avatarInput.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-          addComment(text, e.target.result);
-        };
-        reader.readAsDataURL(file);
-      } else {
-        addComment(text, null);
-      }
-    });
-
-    function addComment(text, avatarData) {
       comments.unshift({
+        username,
         text,
-        avatar: avatarData,
         likes: 0,
-        timestamp: Date.now()
+        timestamp: Date.now(),
+        replies: []
       });
       saveComments();
       renderComments();
       commentInput.value = '';
-      avatarInput.value = '';
-    }
-
-    // 排序按钮事件
-    sortTimeBtn.addEventListener('click', () => {
-      currentSort = 'time';
-      sortTimeBtn.classList.add('active');
-      sortLikeBtn.classList.remove('active');
-      renderComments();
-    });
-    sortLikeBtn.addEventListener('click', () => {
-      currentSort = 'likes';
-      sortLikeBtn.classList.add('active');
-      sortTimeBtn.classList.remove('active');
-      renderComments();
+      // 保留用户名方便多次留言
     });
 
     renderComments();
