@@ -1,33 +1,184 @@
-<html>
+<!DOCTYPE html>
+<html lang="zh-CN">
 <head>
-  <meta charset="UTF-8">
-  <title>Hi, this is Cyn's web</title>
+  <meta charset="UTF-8" />
+  <title>Cyn's 微博 - 带留言区</title>
   <style>
-    h1 {
-      color: #333333;
-      font-size: 48px;
-      text-shadow: 3px 3px 3px #666666;
+    body {
+      margin: 0;
+      background-color: #f5f5f5;
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      color: #333;
+    }
+
+    .navbar {
+      background-color: #fff;
+      border-bottom: 1px solid #e6e6e6;
+      padding: 12px 24px;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .navbar h1 {
+      margin: 0;
+      font-size: 20px;
+      color: #222;
+      cursor: pointer;
+      user-select: none;
+      transition: color 0.5s ease;
+    }
+
+    .navbar h1.animate {
+      color: #ff4500;
+      text-shadow: 0 0 8px #ff4500;
+    }
+
+    .main {
+      max-width: 600px;
+      margin: 40px auto;
+      background-color: #fff;
+      padding: 24px;
+      border: 1px solid #e5e5e5;
+      border-radius: 8px;
+    }
+
+    .main p {
+      line-height: 1.7;
+      font-size: 15px;
+    }
+
+    .main img {
+      width: 100%;
+      border-radius: 6px;
+      margin-top: 16px;
+    }
+
+    /* 留言区样式 */
+    .comment-section {
+      margin-top: 40px;
+    }
+
+    .comment-section h3 {
+      margin-bottom: 10px;
+      color: #555;
+    }
+
+    .comment-input {
+      width: 100%;
+      min-height: 60px;
+      resize: vertical;
+      padding: 8px;
+      font-size: 14px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+
+    .btn-submit {
+      margin-top: 10px;
+      background-color: #ff4500;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      font-size: 14px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .btn-submit:hover {
+      background-color: #e03e00;
+    }
+
+    .comments-list {
+      margin-top: 20px;
+      max-height: 300px;
+      overflow-y: auto;
+      border-top: 1px solid #ddd;
+      padding-top: 10px;
+    }
+
+    .comment-item {
+      background-color: #f9f9f9;
+      padding: 8px 12px;
+      border-radius: 6px;
+      margin-bottom: 12px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      word-break: break-word;
+    }
+
+    .footer {
+      background-color: #f5f5f5;
+      color: #999;
+      font-size: 13px;
+      text-align: center;
+      padding: 20px 10px;
+      border-top: 1px solid #e5e5e5;
+      margin-top: 60px;
     }
   </style>
-  <script>
-    function change() {
-      document.getElementsByTagName('h1')[0].style.color = '#ff0000';
-    }
-  </script>
 </head>
 <body>
-  <h1 onclick="change()">Welcome to Cyn's world!</h1>
 
-  <p>哟瞧瞧是谁来了</p>
-
-  <p>
-    <img src="https://images.unsplash.com/photo-1751209978666-c1007795154e?q=80&amp;w=774&amp;auto=format&amp;fit=crop&amp;ixlib=rb-4.1.0&amp;ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" 
-         alt="hiii" width="478" height="618">
-  </p>
-
-  <p>如何呢？</p>
-  <div id="footer" style="background-color: rgba(0, 0, 255, 0.3);">
-    版权 © cynn30.github.io
+  <div class="navbar">
+    <h1 id="title">Cyn's 微博页</h1>
   </div>
+
+  <div class="main">
+    <p>本网站由 <strong>cynn30</strong> 使用 GitHub Pages 自主搭建，旨在作为个人学习、创作与分享的小天地。<br>
+      网站内容均为原创或已注明来源，欢迎访问、交流与欣赏，转载请注明出处。<br>
+      页面设计纯属兴趣练习，若有显示问题或建议，欢迎联系站主完善改进！</p>
+
+    <img src="https://images.unsplash.com/photo-1751209978666-c1007795154e?q=80&w=774&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="欢迎图" />
+
+    <!-- 留言区 -->
+    <div class="comment-section">
+      <h3>留言区</h3>
+      <textarea id="commentInput" class="comment-input" placeholder="写点什么吧..."></textarea>
+      <button class="btn-submit" id="submitBtn">提交留言</button>
+
+      <div id="commentsList" class="comments-list">
+        <!-- 留言会显示这里 -->
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    版权 © cynn30.github.io ｜个人网站 ｜ GitHub Pages 支持<br>
+    2025 · Cyn’s Web
+  </div>
+
+  <script>
+    // 标题动画：点一次变色并光晕，3秒后恢复
+    const title = document.getElementById('title');
+    title.addEventListener('click', () => {
+      title.classList.add('animate');
+      setTimeout(() => title.classList.remove('animate'), 3000);
+    });
+
+    // 留言提交功能
+    const submitBtn = document.getElementById('submitBtn');
+    const commentInput = document.getElementById('commentInput');
+    const commentsList = document.getElementById('commentsList');
+
+    submitBtn.addEventListener('click', () => {
+      const text = commentInput.value.trim();
+      if (!text) {
+        alert('留言不能为空哦~');
+        return;
+      }
+      // 创建留言元素
+      const commentItem = document.createElement('div');
+      commentItem.className = 'comment-item';
+      commentItem.textContent = text;
+
+      // 插入到评论列表顶部
+      commentsList.insertBefore(commentItem, commentsList.firstChild);
+
+      // 清空输入框
+      commentInput.value = '';
+    });
+  </script>
 </body>
 </html>
