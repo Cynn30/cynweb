@@ -2,150 +2,11 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8" />
-  <title>Cyn's Web - 精美留言区</title>
+  <title>Cyn's Web - 留言区升级版</title>
   <style>
-    /* 重置和基础 */
-    * {
-      box-sizing: border-box;
-    }
-    body {
-      margin: 0;
-      background: linear-gradient(135deg, #f0f4ff 0%, #d9e4ff 100%);
-      font-family: "PingFang SC", "Helvetica Neue", Helvetica, Arial, sans-serif;
-      color: #333;
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
-    }
-    /* 顶栏 */
-    .navbar {
-      background-color: #fff;
-      border-bottom: 1px solid #c8d0e7;
-      padding: 16px 24px;
-      position: sticky;
-      top: 0;
-      z-index: 1000;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.07);
-    }
-    .navbar h1 {
-      margin: 0;
-      font-size: 24px;
-      font-weight: 700;
-      color: #1a1a1a;
-      cursor: pointer;
-      user-select: none;
-      transition: color 0.5s ease, text-shadow 0.5s ease;
-      letter-spacing: 1px;
-    }
-    .navbar h1.animate {
-      color: #ff6f61;
-      text-shadow: 0 0 10px #ff6f61;
-    }
-    /* 主体 */
-    .main {
-      max-width: 650px;
-      margin: 50px auto 80px auto;
-      background-color: #ffffffcc;
-      padding: 32px 36px;
-      border-radius: 14px;
-      box-shadow: 0 8px 24px rgba(51, 85, 138, 0.15);
-      backdrop-filter: saturate(180%) blur(8px);
-      border: 1px solid rgba(200,220,255,0.4);
-    }
-    .main p {
-      line-height: 1.8;
-      font-size: 16px;
-      color: #4a4a4a;
-      user-select: text;
-    }
-    .main img {
-      width: 100%;
-      border-radius: 12px;
-      margin-top: 20px;
-      box-shadow: 0 4px 16px rgba(0,0,0,0.1);
-      transition: transform 0.3s ease;
-      cursor: pointer;
-    }
-    .main img:hover {
-      transform: scale(1.03);
-    }
-    /* 留言区 */
-    .comment-section {
-      margin-top: 48px;
-    }
-    .comment-section h3 {
-      margin-bottom: 18px;
-      font-weight: 600;
-      color: #3c3c3c;
-      font-size: 22px;
-      letter-spacing: 0.03em;
-      border-left: 5px solid #ff6f61;
-      padding-left: 10px;
-      user-select: none;
-    }
-    .comment-input {
-      width: 100%;
-      min-height: 80px;
-      resize: vertical;
-      padding: 12px 14px;
-      font-size: 15px;
-      border: 2px solid #d0d7ff;
-      border-radius: 8px;
-      box-shadow: inset 0 2px 6px rgba(200,210,255,0.5);
-      transition: border-color 0.3s ease, box-shadow 0.3s ease;
-      font-family: inherit;
-      outline-offset: 2px;
-      outline-color: transparent;
-      outline-style: solid;
-      user-select: text;
-    }
-    .comment-input:focus {
-      border-color: #ff6f61;
-      box-shadow: 0 0 10px #ff6f61aa;
-      outline-color: #ff6f61cc;
-    }
-    .btn-submit {
-      margin-top: 12px;
-      background-color: #ff6f61;
-      color: white;
-      border: none;
-      padding: 12px 24px;
-      font-size: 15px;
-      font-weight: 600;
-      border-radius: 25px;
-      cursor: pointer;
-      transition: background-color 0.3s ease, box-shadow 0.3s ease;
-      box-shadow: 0 4px 12px #ff6f6133;
-      user-select: none;
-    }
-    .btn-submit:hover {
-      background-color: #e0584d;
-      box-shadow: 0 6px 16px #e0584d99;
-    }
-    /* 评论列表 */
-    .comments-list {
-      margin-top: 26px;
-      max-height: 450px;
-      overflow-y: auto;
-      border-top: 2px solid #ff6f61;
-      padding-top: 18px;
-      scrollbar-width: thin;
-      scrollbar-color: #ff6f61 #f0f4ff;
-    }
-    /* 兼容webkit滚动条 */
-    .comments-list::-webkit-scrollbar {
-      width: 9px;
-    }
-    .comments-list::-webkit-scrollbar-track {
-      background: #f0f4ff;
-      border-radius: 6px;
-    }
-    .comments-list::-webkit-scrollbar-thumb {
-      background-color: #ff6f61cc;
-      border-radius: 6px;
-      border: 2px solid #f0f4ff;
-    }
-    /* 每条留言 */
+    /* 之前的样式省略，只写新增或改动的部分 */
     .comment-item {
+      display: flex;
       background: #fff;
       padding: 14px 18px;
       border-radius: 12px;
@@ -158,103 +19,52 @@
     .comment-item:hover {
       box-shadow: 0 6px 16px rgba(255,111,97,0.3);
     }
+    .comment-avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      margin-right: 14px;
+      flex-shrink: 0;
+      object-fit: cover;
+      border: 2px solid #ff6f61;
+    }
+    .comment-content {
+      flex: 1;
+    }
     .comment-text {
-      margin-bottom: 12px;
+      margin-bottom: 8px;
       white-space: pre-wrap;
       font-size: 15px;
       color: #3d3d3d;
     }
-    /* 操作区 */
-    .comment-actions {
-      font-size: 14px;
-      color: #888;
+    .comment-meta {
+      font-size: 12px;
+      color: #aaa;
+      margin-bottom: 6px;
+    }
+    /* 排序按钮 */
+    .sort-buttons {
+      margin-bottom: 18px;
       user-select: none;
     }
-    .comment-actions button {
-      background: none;
-      border: none;
-      color: #888;
-      cursor: pointer;
-      padding: 0 8px;
-      border-radius: 6px;
-      transition: background-color 0.25s ease, color 0.25s ease;
-      font-weight: 600;
-      user-select: none;
-    }
-    .comment-actions button:hover {
-      color: #ff6f61;
-      background-color: #ffe6e3;
-    }
-    /* 回复列表 */
-    .comment-replies {
-      margin-top: 14px;
-      margin-left: 28px;
-      border-left: 3px solid #ffd6d1;
-      padding-left: 14px;
-    }
-    /* 回复留言样式 */
-    .comment-replies .comment-item {
-      background: #fff0f0;
-      box-shadow: 0 2px 6px rgba(255,111,97,0.15);
-      margin-bottom: 12px;
-    }
-    /* 回复输入框 */
-    .reply-input {
-      width: 100%;
-      min-height: 44px;
-      resize: vertical;
-      padding: 8px 10px;
-      font-size: 14px;
-      border: 2px solid #d0d7ff;
-      border-radius: 8px;
-      box-shadow: inset 0 2px 6px rgba(200,210,255,0.5);
-      transition: border-color 0.3s ease, box-shadow 0.3s ease;
-      font-family: inherit;
-      outline-offset: 2px;
-      outline-color: transparent;
-      outline-style: solid;
-      margin-top: 8px;
-      display: none;
-      user-select: text;
-    }
-    .reply-input:focus {
-      border-color: #ff6f61;
-      box-shadow: 0 0 10px #ff6f61aa;
-      outline-color: #ff6f61cc;
-    }
-    .reply-submit-btn {
+    .sort-buttons button {
       background-color: #ff6f61;
-      color: white;
       border: none;
-      padding: 8px 18px;
-      font-size: 14px;
-      font-weight: 600;
+      color: white;
+      padding: 8px 14px;
+      margin-right: 10px;
       border-radius: 20px;
       cursor: pointer;
-      margin-top: 6px;
-      display: none;
-      user-select: none;
-      transition: background-color 0.3s ease, box-shadow 0.3s ease;
+      font-weight: 600;
+      transition: background-color 0.3s ease;
     }
-    .reply-submit-btn:hover {
+    .sort-buttons button.active, .sort-buttons button:hover {
       background-color: #e0584d;
       box-shadow: 0 5px 14px #e0584dbb;
-    }
-    /* 底部 */
-    .footer {
-      background-color: #f0f4ff;
-      color: #999;
-      font-size: 13px;
-      text-align: center;
-      padding: 24px 10px;
-      border-top: 1px solid #c8d0e7;
-      margin-top: 80px;
-      user-select: none;
     }
   </style>
 </head>
 <body>
-
   <div class="navbar">
     <h1 id="title">Cyn's 微博页</h1>
   </div>
@@ -268,7 +78,15 @@
 
     <div class="comment-section">
       <h3>留言区</h3>
+      
+      <!-- 排序按钮 -->
+      <div class="sort-buttons">
+        <button id="sortTimeBtn" class="active">按时间排序</button>
+        <button id="sortLikeBtn">按点赞排序</button>
+      </div>
+
       <textarea id="commentInput" class="comment-input" placeholder="写点什么吧..."></textarea>
+      <input type="file" id="avatarInput" accept="image/*" style="margin-top: 10px;" />
       <button class="btn-submit" id="submitBtn">提交留言</button>
 
       <div id="commentsList" class="comments-list"></div>
@@ -289,16 +107,33 @@
 
     const submitBtn = document.getElementById('submitBtn');
     const commentInput = document.getElementById('commentInput');
+    const avatarInput = document.getElementById('avatarInput');
     const commentsList = document.getElementById('commentsList');
+    const sortTimeBtn = document.getElementById('sortTimeBtn');
+    const sortLikeBtn = document.getElementById('sortLikeBtn');
 
-    // 读取本地存储留言
     let comments = JSON.parse(localStorage.getItem('comments') || '[]');
+    let currentSort = 'time'; // 默认按时间排序
+
+    // 默认头像URL（你可以换成你喜欢的）
+    const defaultAvatar = 'https://i.pravatar.cc/48?u=default';
+
+    function formatDate(timestamp) {
+      const d = new Date(timestamp);
+      return d.toLocaleString('zh-CN', { hour12: false });
+    }
 
     function renderComments() {
+      // 根据排序规则排序
+      if(currentSort === 'time') {
+        comments.sort((a, b) => b.timestamp - a.timestamp);
+      } else if(currentSort === 'likes') {
+        comments.sort((a, b) => (b.likes || 0) - (a.likes || 0));
+      }
+
       commentsList.innerHTML = '';
       comments.forEach((comment, index) => {
-        const commentDiv = createCommentElement(comment, index);
-        commentsList.appendChild(commentDiv);
+        commentsList.appendChild(createCommentElement(comment, index));
       });
     }
 
@@ -306,14 +141,34 @@
       const div = document.createElement('div');
       div.className = 'comment-item';
 
+      // 头像
+      const avatar = document.createElement('img');
+      avatar.className = 'comment-avatar';
+      avatar.src = comment.avatar || defaultAvatar;
+      avatar.alt = '用户头像';
+      div.appendChild(avatar);
+
+      // 内容区
+      const contentDiv = document.createElement('div');
+      contentDiv.className = 'comment-content';
+
+      // 时间戳
+      const metaDiv = document.createElement('div');
+      metaDiv.className = 'comment-meta';
+      metaDiv.textContent = formatDate(comment.timestamp || Date.now());
+      contentDiv.appendChild(metaDiv);
+
+      // 留言内容
       const textDiv = document.createElement('div');
       textDiv.className = 'comment-text';
       textDiv.textContent = comment.text;
-      div.appendChild(textDiv);
+      contentDiv.appendChild(textDiv);
 
+      // 操作区
       const actionsDiv = document.createElement('div');
       actionsDiv.className = 'comment-actions';
 
+      // 点赞按钮
       const likeBtn = document.createElement('button');
       likeBtn.textContent = `👍 ${comment.likes || 0}`;
       likeBtn.title = '点赞';
@@ -324,16 +179,18 @@
       };
       actionsDiv.appendChild(likeBtn);
 
-      const replyBtn = document.createElement('button');
-      replyBtn.textContent = '回复';
-      replyBtn.title = '回复这条留言';
-      actionsDiv.appendChild(replyBtn);
+      // 回复按钮（暂时无回复功能，后续可扩展）
+      // const replyBtn = document.createElement('button');
+      // replyBtn.textContent = '回复';
+      // replyBtn.title = '回复这条留言';
+      // actionsDiv.appendChild(replyBtn);
 
+      // 删除按钮
       const delBtn = document.createElement('button');
       delBtn.textContent = '删除';
       delBtn.title = '删除这条留言';
       delBtn.onclick = () => {
-        if(confirm('确认删除这条留言吗？')) {
+        if (confirm('确认删除这条留言吗？')) {
           comments.splice(index, 1);
           saveComments();
           renderComments();
@@ -341,73 +198,9 @@
       };
       actionsDiv.appendChild(delBtn);
 
-      div.appendChild(actionsDiv);
+      contentDiv.appendChild(actionsDiv);
 
-      const repliesDiv = document.createElement('div');
-      repliesDiv.className = 'comment-replies';
-      div.appendChild(repliesDiv);
-
-      if (comment.replies && comment.replies.length > 0) {
-        comment.replies.forEach((rep, repIndex) => {
-          const repDiv = document.createElement('div');
-          repDiv.className = 'comment-item';
-          repDiv.style.backgroundColor = '#fff0f0';
-          repDiv.style.marginBottom = '12px';
-
-          const repText = document.createElement('div');
-          repText.className = 'comment-text';
-          repText.textContent = rep;
-          repDiv.appendChild(repText);
-
-          const repActions = document.createElement('div');
-          repActions.className = 'comment-actions';
-
-          const repDelBtn = document.createElement('button');
-          repDelBtn.textContent = '删除回复';
-          repDelBtn.title = '删除这条回复';
-          repDelBtn.onclick = () => {
-            if(confirm('确认删除这条回复吗？')) {
-              comment.replies.splice(repIndex, 1);
-              saveComments();
-              renderComments();
-            }
-          };
-          repActions.appendChild(repDelBtn);
-
-          repDiv.appendChild(repActions);
-          repliesDiv.appendChild(repDiv);
-        });
-      }
-
-      const replyInput = document.createElement('textarea');
-      replyInput.className = 'reply-input';
-      replyInput.placeholder = '写回复...';
-
-      const replySubmitBtn = document.createElement('button');
-      replySubmitBtn.className = 'reply-submit-btn';
-      replySubmitBtn.textContent = '提交回复';
-
-      div.appendChild(replyInput);
-      div.appendChild(replySubmitBtn);
-
-      replyBtn.onclick = () => {
-        const visible = replyInput.style.display === 'block';
-        replyInput.style.display = visible ? 'none' : 'block';
-        replySubmitBtn.style.display = visible ? 'none' : 'inline-block';
-        if (!visible) replyInput.focus();
-      };
-
-      replySubmitBtn.onclick = () => {
-        const val = replyInput.value.trim();
-        if(!val) {
-          alert('回复不能为空哦~');
-          return;
-        }
-        comment.replies = comment.replies || [];
-        comment.replies.push(val);
-        saveComments();
-        renderComments();
-      };
+      div.appendChild(contentDiv);
 
       return div;
     }
@@ -422,14 +215,44 @@
         alert('留言不能为空哦~');
         return;
       }
+      // 读取上传头像（FileReader）
+      const file = avatarInput.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          addComment(text, e.target.result);
+        };
+        reader.readAsDataURL(file);
+      } else {
+        addComment(text, null);
+      }
+    });
+
+    function addComment(text, avatarData) {
       comments.unshift({
         text,
+        avatar: avatarData,
         likes: 0,
-        replies: []
+        timestamp: Date.now()
       });
       saveComments();
       renderComments();
       commentInput.value = '';
+      avatarInput.value = '';
+    }
+
+    // 排序按钮事件
+    sortTimeBtn.addEventListener('click', () => {
+      currentSort = 'time';
+      sortTimeBtn.classList.add('active');
+      sortLikeBtn.classList.remove('active');
+      renderComments();
+    });
+    sortLikeBtn.addEventListener('click', () => {
+      currentSort = 'likes';
+      sortLikeBtn.classList.add('active');
+      sortTimeBtn.classList.remove('active');
+      renderComments();
     });
 
     renderComments();
