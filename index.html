@@ -1,700 +1,294 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh-CN" >
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Cyn's 留言页 - 动态</title>
-<style>
-  /* Reset & base */
-  body {
-    margin: 0; padding: 0; background: #fff6f3;
-    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-    color: #333;
-    line-height: 1.5;
-    min-height: 100vh;
-    display: flex; flex-direction: column;
-  }
-
-  .navbar {
-    display: flex; justify-content: space-between; align-items: center;
-    background: #ff6f61;
-    padding: 12px 24px;
-    color: white;
-    font-weight: 600;
-    font-size: 1.4rem;
-    box-shadow: 0 4px 10px rgb(255 111 97 / 0.4);
-  }
-
-  #avatarStyleSelect {
-    padding: 6px 12px;
-    font-size: 1rem;
-    border-radius: 12px;
-    border: none;
-    outline: none;
-    cursor: pointer;
-    transition: background 0.3s ease;
-  }
-  #avatarStyleSelect:hover {
-    background: rgba(255,255,255,0.3);
-  }
-
-  main {
-    flex-grow: 1;
-    max-width: 900px;
-    margin: 20px auto;
-    background: white;
-    border-radius: 20px;
-    padding: 20px 30px 40px;
-    box-shadow: 0 0 20px #ffc6b9aa;
-  }
-
-  /* 介绍文本 */
-  #introText {
-    font-size: 1.05rem;
-    margin-bottom: 16px;
-    color: #555;
-    line-height: 1.6;
-  }
-
-  /* 图片 */
-  .welcome-image {
-    display: block;
-    max-width: 100%;
-    max-height: 320px;
-    margin: 0 auto 32px;
-    border-radius: 16px;
-    box-shadow: 0 8px 20px rgb(255 111 97 / 0.35);
-    object-fit: contain;
-  }
-
-  /* 版块标题 */
-  h2.section-title {
-    border-bottom: 3px solid #ff6f61;
-    padding-bottom: 6px;
-    margin-top: 40px;
-    margin-bottom: 16px;
-    font-weight: 700;
-    color: #ff6f61;
-  }
-
-  /* 发表动态和留言区 */
-  .input-row {
-    margin-bottom: 12px;
-  }
-  input[type=text], textarea {
-    width: 100%;
-    border: 2px solid #ffd6d1;
-    border-radius: 12px;
-    padding: 12px 16px;
-    font-size: 1rem;
-    resize: vertical;
-    transition: border-color 0.3s ease;
-  }
-  input[type=text]:focus, textarea:focus {
-    outline: none;
-    border-color: #ff6f61;
-    box-shadow: 0 0 6px #ff6f61aa;
-  }
-
-  textarea {
-    min-height: 80px;
-  }
-
-  button {
-    background-color: #ff6f61;
-    color: white;
-    font-weight: 600;
-    font-size: 1.1rem;
-    border: none;
-    border-radius: 16px;
-    padding: 10px 28px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    margin-top: 6px;
-  }
-  button:hover {
-    background-color: #e65b4e;
-  }
-
-  /* 动态列表 */
-  .post-list {
-    margin-top: 20px;
-  }
-
-  .post-item, .comment-item {
-    background: #fff0ed;
-    border-radius: 16px;
-    padding: 14px 18px;
-    margin-bottom: 20px;
-    box-shadow: 0 2px 10px rgb(255 111 97 / 0.15);
-  }
-
-  /* 头像 */
-  .comment-avatar {
-    width: 48px;
-    height: 48px;
-    border-radius: 12px;
-    margin-right: 14px;
-    object-fit: cover;
-    border: 2px solid #ff6f61;
-    transition: transform 0.2s ease;
-  }
-
-  /* 头部布局 */
-  .comment-header, .post-header {
-    display: flex;
-    align-items: center;
-    margin-bottom: 8px;
-  }
-
-  .comment-username, .post-username {
-    font-weight: 700;
-    font-size: 1.1rem;
-    margin-right: 12px;
-    color: #ff4c3b;
-  }
-
-  .comment-time, .post-time {
-    font-size: 0.85rem;
-    color: #aa7468;
-  }
-
-  /* 评论内容 */
-  .comment-text, .post-text {
-    font-size: 1rem;
-    white-space: pre-wrap;
-  }
-
-  /* 评论操作 */
-  .comment-actions {
-    margin-top: 10px;
-  }
-  .comment-actions button {
-    background: none;
-    border: none;
-    color: #ff6f61;
-    font-weight: 600;
-    margin-right: 18px;
-    cursor: pointer;
-    padding: 6px 0;
-  }
-  .comment-actions button:hover {
-    text-decoration: underline;
-  }
-
-  /* 多级回复缩进 */
-  .comment-replies {
-    margin-top: 16px;
-    border-left: 4px solid #ffd6d1;
-    padding-left: 18px;
-  }
-  .comment-replies .comment-replies {
-    margin-left: 20px;
-  }
-
-  /* 回复输入区 */
-  .reply-username-input, .reply-input, .reply-submit-btn {
-    width: 100%;
-    margin-top: 6px;
-    border-radius: 12px;
-  }
-  .reply-username-input {
-    padding: 8px 14px;
-    font-size: 0.95rem;
-    border: 2px solid #ffd6d1;
-    resize: none;
-  }
-  .reply-input {
-    padding: 10px 14px;
-    min-height: 60px;
-    resize: vertical;
-    border: 2px solid #ffd6d1;
-  }
-  .reply-submit-btn {
-    background-color: #ff6f61;
-    color: white;
-    font-weight: 600;
-    font-size: 1rem;
-    border: none;
-    cursor: pointer;
-    margin-top: 6px;
-    padding: 8px 16px;
-  }
-  .reply-submit-btn:hover {
-    background-color: #e65b4e;
-  }
-
-  /* 页面底部 */
-  .footer {
-    text-align: center;
-    padding: 18px 12px;
-    font-size: 0.9rem;
-    color: #999;
-    margin-top: 40px;
-  }
-
-  /* 动态区和留言区输入区 */
-  .section-input-group {
-    margin-bottom: 16px;
-  }
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Cyn's 树洞站 - 登录 / 注册</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    body, html {
+      margin: 0; padding: 0;
+      height: 100%;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background: #e6f0f7;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+    }
+    .container {
+      display: flex;
+      width: 900px;
+      max-width: 95vw;
+      height: 600px;
+      border-radius: 20px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+      overflow: hidden;
+      background: white;
+      user-select: none;
+    }
+    .welcome-section {
+      flex: 1.4;
+      background-image: url("https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80");
+      background-size: cover;
+      background-position: center;
+      position: relative;
+      color: #e6f0f7;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 40px 30px;
+      text-shadow: 0 0 10px rgba(0,0,0,0.6);
+    }
+    .welcome-section h1 {
+      font-size: 2.8rem;
+      margin-bottom: 12px;
+      font-weight: 900;
+    }
+    .welcome-section p {
+      font-size: 1.1rem;
+      line-height: 1.5;
+      font-weight: 500;
+      max-width: 280px;
+      opacity: 0.9;
+    }
+    .form-section {
+      flex: 1;
+      background: #f4f9ff;
+      padding: 50px 38px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      position: relative;
+    }
+    .form-section h2 {
+      margin: 0 0 30px 0;
+      color: #4a90e2;
+      font-weight: 800;
+      font-size: 2rem;
+      text-align: center;
+    }
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 600;
+      color: #4a90e2;
+      font-size: 0.95rem;
+    }
+    input[type="text"], input[type="password"] {
+      width: 100%;
+      padding: 12px 16px;
+      margin-bottom: 22px;
+      border: 2px solid #a9c0e0;
+      border-radius: 14px;
+      font-size: 1rem;
+      font-family: inherit;
+      color: #2f3e4d;
+      background: #f8fbff;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+    input[type="text"]:focus, input[type="password"]:focus {
+      border-color: #4a90e2;
+      box-shadow: 0 0 8px rgba(74, 144, 226, 0.5);
+      outline: none;
+      background: white;
+    }
+    button {
+      background-color: #4a90e2;
+      border: none;
+      color: #e6f0f7;
+      font-weight: 700;
+      font-size: 1.1rem;
+      padding: 14px 0;
+      border-radius: 18px;
+      cursor: pointer;
+      box-shadow: 0 3px 6px rgba(74, 144, 226, 0.5);
+      transition: background-color 0.25s ease, box-shadow 0.25s ease;
+      user-select: none;
+      margin-top: 10px;
+      width: 100%;
+    }
+    button:hover, button:focus {
+      background-color: #2e66c7;
+      box-shadow: 0 6px 14px rgba(46, 102, 199, 0.8);
+      outline: none;
+    }
+    .toggle-text {
+      margin-top: 18px;
+      font-size: 0.9rem;
+      color: #4a90e2;
+      text-align: center;
+      cursor: pointer;
+      user-select: none;
+      transition: color 0.3s ease;
+    }
+    .toggle-text:hover {
+      color: #2e66c7;
+      text-decoration: underline;
+    }
+    .error-msg {
+      color: #d94f4f;
+      font-weight: 700;
+      margin-bottom: 16px;
+      text-align: center;
+      min-height: 20px;
+      user-select: none;
+    }
+    @media (max-width: 750px) {
+      .container {
+        flex-direction: column;
+        height: auto;
+      }
+      .welcome-section {
+        flex: none;
+        height: 240px;
+        border-radius: 20px 20px 0 0;
+        text-align: center;
+        padding: 30px 24px;
+      }
+      .form-section {
+        flex: none;
+        padding: 32px 24px 48px;
+        border-radius: 0 0 20px 20px;
+      }
+    }
+  </style>
 </head>
 <body>
-  <header class="navbar">
-    <div>Cyn's 微博页</div>
-    <select id="avatarStyleSelect" title="选择头像风格">
-      <option value="identicon">Identicon</option>
-      <option value="avataaars">Avataaars</option>
-      <option value="bottts">Bottts</option>
-      <option value="gridy">Gridy</option>
-      <option value="jdenticon">Jdenticon</option>
-      <option value="micah">Micah</option>
-    </select>
-  </header>
 
-  <main>
-    <section id="introSection">
-      <p id="introText">本网站由 <strong>cynn30</strong> 使用 GitHub Pages 自主搭建。<br>
-      网站内容均为原创或已注明来源，欢迎访问、交流与欣赏，转载请注明出处。<br>
-      页面设计纯属兴趣练习，若有显示问题或建议，欢迎联系站主完善改进！</p>
-      <img class="welcome-image" src="https://static.vecteezy.com/system/resources/previews/011/976/274/non_2x/stick-figures-welcome-free-vector.jpg" alt="welcome!" />
-    </section>
+<div class="container" role="main" aria-label="登录和注册界面">
+  <section class="welcome-section" aria-label="欢迎区域">
+    <h1>欢迎来到 Cyn's 树洞</h1>
+    <p>在这里，你可以写下心声，秘密安全保存。<br>现在，先登录或者创建你的账号开始吧！</p>
+  </section>
 
-    <!-- 发布动态 -->
-    <section id="postSection">
-      <h2 class="section-title">发布动态</h2>
-      <div class="section-input-group">
-        <input type="text" id="postUsername" placeholder="请输入用户名（必填）" maxlength="15" />
-      </div>
-      <div class="section-input-group">
-        <textarea id="postContent" placeholder="分享点新鲜事..."></textarea>
-      </div>
-      <button id="postSubmitBtn">发布动态</button>
-      <div id="postList" class="post-list"></div>
-    </section>
-
-    <!-- 留言区 -->
-    <section id="commentSection">
-      <h2 class="section-title">留言区</h2>
-      <div class="input-row">
-        <input type="text" id="commentUsername" placeholder="请输入用户名（必填）" maxlength="15" />
-      </div>
-      <textarea id="commentInput" placeholder="写点什么吧..."></textarea>
-      <button id="commentSubmitBtn">提交留言</button>
-
-      <div id="commentsList" class="comments-list"></div>
-    </section>
-  </main>
-
-  <footer class="footer" id="footerText">
-    版权 © cynn30.github.io ｜个人网站 ｜ GitHub Pages 支持<br>
-    2025 · Cyn’s Web
-  </footer>
+  <section class="form-section" aria-label="账号操作区域">
+    <h2 id="formTitle">登录</h2>
+    <div class="error-msg" id="errorMsg" aria-live="assertive"></div>
+    <form id="authForm" novalidate>
+      <label for="usernameInput">用户名</label>
+      <input type="text" id="usernameInput" name="username" autocomplete="username" required aria-required="true" aria-describedby="usernameHelp" />
+      <label for="passwordInput">密码</label>
+      <input type="password" id="passwordInput" name="password" autocomplete="current-password" required aria-required="true" />
+      <button type="submit" id="submitBtn">登录</button>
+    </form>
+    <div class="toggle-text" id="toggleMode" role="button" tabindex="0" aria-pressed="false" aria-label="切换注册和登录">
+      还没有账号？点击注册
+    </div>
+  </section>
+</div>
 
 <script>
-  // 国际化文案，默认中文
-  const i18n = {
-    zh: {
-      usernamePlaceholder: '请输入用户名（必填）',
-      commentPlaceholder: '写点什么吧...',
-      submitBtn: '提交留言',
-      commentTitle: '留言区',
-      introText: '本网站由 <strong>cynn30</strong> 使用 GitHub Pages 自主搭建。<br>网站内容均为原创或已注明来源，欢迎访问、交流与欣赏，转载请注明出处。<br>页面设计纯属兴趣练习，若有显示问题或建议，欢迎联系站主完善改进！',
-      footerText: '版权 © cynn30.github.io ｜个人网站 ｜ GitHub Pages 支持<br>2025 · Cyn’s Web',
-      alerts: {
-        usernameEmpty: '请输入用户名',
-        commentEmpty: '请输入留言内容',
-        postEmpty: '请输入动态内容',
-        replyEmpty: '回复不能为空！',
-        confirmDelComment: '确认删除这条留言吗？',
-        confirmDelReply: '确认删除这条回复吗？',
-        replyUsernameEmpty: '请输入回复用户名'
-      },
-      replyUsernamePlaceholder: '回复用户名（必填）',
-      replyPlaceholder: '回复内容...',
-      postUsernamePlaceholder: '请输入用户名（必填）',
-      postContentPlaceholder: '分享点新鲜事...'
-    },
-    en: {
-      usernamePlaceholder: 'Please enter username (required)',
-      commentPlaceholder: 'Write something...',
-      submitBtn: 'Submit Comment',
-      commentTitle: 'Comments',
-      introText: 'This website is built by <strong>cynn30</strong> using GitHub Pages.<br>All content is original or cited. Welcome to visit, communicate, and appreciate. Please indicate the source when reposting.<br>Page design is purely for fun practice, contact the owner for any display issues or suggestions!',
-      footerText: 'Copyright © cynn30.github.io | Personal Website | GitHub Pages Support<br>2025 · Cyn’s Web',
-      alerts: {
-        usernameEmpty: 'Please enter username',
-        commentEmpty: 'Please enter comment content',
-        postEmpty: 'Please enter post content',
-        replyEmpty: 'Reply cannot be empty!',
-        confirmDelComment: 'Confirm to delete this comment?',
-        confirmDelReply: 'Confirm to delete this reply?',
-        replyUsernameEmpty: 'Please enter reply username'
-      },
-      replyUsernamePlaceholder: 'Reply username (required)',
-      replyPlaceholder: 'Reply content...',
-      postUsernamePlaceholder: 'Please enter username (required)',
-      postContentPlaceholder: 'Share something new...'
-    }
-  };
+  // 本地存储账户（注意：仅示范，非安全方案）
+  // 账户结构： { username: string, password: string }
+  const STORAGE_KEY = 'treehole_users';
+  let users = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
 
-  // 根据浏览器语言设置当前语言（默认中文）
-  let lang = navigator.language.startsWith('en') ? 'en' : 'zh';
+  const authForm = document.getElementById('authForm');
+  const usernameInput = document.getElementById('usernameInput');
+  const passwordInput = document.getElementById('passwordInput');
+  const errorMsg = document.getElementById('errorMsg');
+  const formTitle = document.getElementById('formTitle');
+  const submitBtn = document.getElementById('submitBtn');
+  const toggleModeBtn = document.getElementById('toggleMode');
 
-  function setTexts() {
-    // 发布动态区
-    document.getElementById('postUsername').placeholder = i18n[lang].postUsernamePlaceholder;
-    document.getElementById('postContent').placeholder = i18n[lang].postContentPlaceholder;
+  let isLoginMode = true;
 
-    // 留言区
-    document.getElementById('commentUsername').placeholder = i18n[lang].usernamePlaceholder;
-    document.getElementById('commentInput').placeholder = i18n[lang].commentPlaceholder;
-    document.getElementById('commentSubmitBtn').textContent = i18n[lang].submitBtn;
-
-    // 介绍和footer
-    document.getElementById('introText').innerHTML = i18n[lang].introText;
-    document.getElementById('footerText').innerHTML = i18n[lang].footerText;
-  }
-  setTexts();
-
-  // DOM元素引用
-  const avatarStyleSelect = document.getElementById('avatarStyleSelect');
-  const postUsername = document.getElementById('postUsername');
-  const postContent = document.getElementById('postContent');
-  const postSubmitBtn = document.getElementById('postSubmitBtn');
-  const postList = document.getElementById('postList');
-
-  const commentUsername = document.getElementById('commentUsername');
-  const commentInput = document.getElementById('commentInput');
-  const commentSubmitBtn = document.getElementById('commentSubmitBtn');
-  const commentsList = document.getElementById('commentsList');
-
-  // 存储动态和留言数据
-  let posts = JSON.parse(localStorage.getItem('posts') || '[]');
-  let comments = JSON.parse(localStorage.getItem('comments') || '[]');
-
-  // 当前头像风格
-  let avatarStyle = avatarStyleSelect.value;
-  avatarStyleSelect.addEventListener('change', () => {
-    avatarStyle = avatarStyleSelect.value;
-    renderPosts();
-    renderComments();
-  });
-
-  // 时间格式化
-  function formatTimestamp(time) {
-    const now = Date.now();
-    const diff = now - time;
-    if (diff < 60000) return lang === 'zh' ? '刚刚' : 'Just now';
-    if (diff < 3600000) return Math.floor(diff / 60000) + (lang === 'zh' ? '分钟前' : ' minutes ago');
-    if (diff < 86400000) return Math.floor(diff / 3600000) + (lang === 'zh' ? '小时前' : ' hours ago');
-    const date = new Date(time);
-    return date.toLocaleString(lang);
+  function setError(msg) {
+    errorMsg.textContent = msg;
   }
 
-  // 渲染动态列表
-  function renderPosts() {
-    postList.innerHTML = '';
-    if(posts.length === 0) {
-      postList.innerHTML = `<p style="color:#999; text-align:center;">${lang === 'zh' ? '暂无动态，快来发布第一条吧！' : 'No posts yet. Be the first to share!'}</p>`;
+  function clearError() {
+    errorMsg.textContent = '';
+  }
+
+  function saveUsers() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(users));
+  }
+
+  function validateUsername(username) {
+    return /^[a-zA-Z0-9_-]{3,16}$/.test(username);
+  }
+
+  function validatePassword(password) {
+    return password.length >= 6;
+  }
+
+  authForm.addEventListener('submit', e => {
+    e.preventDefault();
+    clearError();
+    const username = usernameInput.value.trim();
+    const password = passwordInput.value;
+
+    if (!validateUsername(username)) {
+      setError('用户名需3-16位，只允许字母数字、下划线和短横线');
       return;
     }
-    posts.forEach(post => {
-      const div = document.createElement('div');
-      div.className = 'post-item';
-
-      const header = document.createElement('div');
-      header.className = 'post-header';
-
-      const avatar = document.createElement('img');
-      avatar.className = 'comment-avatar';
-      avatar.src = `https://api.dicebear.com/6.x/${avatarStyle}/svg?seed=${encodeURIComponent(post.username)}`;
-      avatar.alt = '头像';
-
-      const usernameSpan = document.createElement('span');
-      usernameSpan.className = 'post-username';
-      usernameSpan.textContent = post.username;
-
-      const timeSpan = document.createElement('span');
-      timeSpan.className = 'post-time';
-      timeSpan.textContent = formatTimestamp(post.timestamp);
-
-      header.appendChild(avatar);
-      header.appendChild(usernameSpan);
-      header.appendChild(timeSpan);
-
-      const contentDiv = document.createElement('div');
-      contentDiv.className = 'post-text';
-      contentDiv.textContent = post.text;
-
-      div.appendChild(header);
-      div.appendChild(contentDiv);
-      postList.appendChild(div);
-    });
-  }
-
-  // 多级回复渲染 - 复用上一版本
-  function renderComments() {
-    commentsList.innerHTML = '';
-    if(comments.length === 0) {
-      commentsList.innerHTML = `<p style="color:#999; text-align:center;">${lang === 'zh' ? '暂无留言，快来发表你的想法！' : 'No comments yet. Share your thoughts!'}</p>`;
+    if (!validatePassword(password)) {
+      setError('密码至少6位');
       return;
     }
-    comments.forEach((comment, index) => {
-      const commentDiv = createCommentElement(comment, [index]);
-      commentsList.appendChild(commentDiv);
-    });
-  }
 
-  function createCommentElement(comment, path) {
-    const div = document.createElement('div');
-    div.className = 'comment-item';
-
-    // 头部：头像 + 用户名 + 时间
-    const headerDiv = document.createElement('div');
-    headerDiv.className = 'comment-header';
-
-    const avatar = document.createElement('img');
-    avatar.className = 'comment-avatar';
-    avatar.src = `https://api.dicebear.com/6.x/${avatarStyle}/svg?seed=${encodeURIComponent(comment.username)}`;
-    avatar.alt = '头像';
-    headerDiv.appendChild(avatar);
-
-    const usernameSpan = document.createElement('span');
-    usernameSpan.className = 'comment-username';
-    usernameSpan.textContent = comment.username;
-    headerDiv.appendChild(usernameSpan);
-
-    const timeSpan = document.createElement('span');
-    timeSpan.className = 'comment-time';
-    timeSpan.textContent = formatTimestamp(comment.timestamp);
-    headerDiv.appendChild(timeSpan);
-
-    div.appendChild(headerDiv);
-
-    // 内容
-    const textDiv = document.createElement('div');
-    textDiv.className = 'comment-text';
-    textDiv.textContent = comment.text;
-    div.appendChild(textDiv);
-
-    // 操作按钮
-    const actionsDiv = document.createElement('div');
-    actionsDiv.className = 'comment-actions';
-
-    // 点赞按钮
-    const likeBtn = document.createElement('button');
-    likeBtn.textContent = `👍 ${comment.likes || 0}`;
-    likeBtn.title = lang === 'zh' ? '点赞' : 'Like';
-    likeBtn.onclick = () => {
-      comment.likes = (comment.likes || 0) + 1;
-      saveComments();
-      renderComments();
-    };
-    actionsDiv.appendChild(likeBtn);
-
-    // 回复按钮
-    const replyBtn = document.createElement('button');
-    replyBtn.textContent = lang === 'zh' ? '回复' : 'Reply';
-    replyBtn.title = lang === 'zh' ? '回复这条留言' : 'Reply to this comment';
-    actionsDiv.appendChild(replyBtn);
-
-    // 删除按钮
-    const delBtn = document.createElement('button');
-    delBtn.textContent = lang === 'zh' ? '删除' : 'Delete';
-    delBtn.title = lang === 'zh' ? '删除这条留言' : 'Delete this comment';
-    delBtn.onclick = () => {
-      if(confirm(i18n[lang].alerts.confirmDelComment)) {
-        deleteCommentByPath(path);
-        saveComments();
-        renderComments();
-      }
-    };
-    actionsDiv.appendChild(delBtn);
-
-    div.appendChild(actionsDiv);
-
-    // 回复区域
-    const repliesDiv = document.createElement('div');
-    repliesDiv.className = 'comment-replies';
-    div.appendChild(repliesDiv);
-
-    // 多级回复递归渲染
-    if(comment.replies && comment.replies.length) {
-      comment.replies.forEach((rep, i) => {
-        const repDiv = createCommentElement(rep, path.concat(i));
-        repliesDiv.appendChild(repDiv);
-      });
-    }
-
-    // 回复输入框和用户名输入框，默认隐藏
-    const replyUsernameInput = document.createElement('input');
-    replyUsernameInput.type = 'text';
-    replyUsernameInput.className = 'reply-username-input';
-    replyUsernameInput.placeholder = i18n[lang].replyUsernamePlaceholder;
-    replyUsernameInput.maxLength = 15;
-    replyUsernameInput.style.display = 'none';
-
-    const replyInput = document.createElement('textarea');
-    replyInput.className = 'reply-input';
-    replyInput.placeholder = i18n[lang].replyPlaceholder;
-    replyInput.style.display = 'none';
-
-    const replySubmit = document.createElement('button');
-    replySubmit.className = 'reply-submit-btn';
-    replySubmit.textContent = lang === 'zh' ? '提交回复' : 'Submit Reply';
-    replySubmit.style.display = 'none';
-
-    div.appendChild(replyUsernameInput);
-    div.appendChild(replyInput);
-    div.appendChild(replySubmit);
-
-    replyBtn.onclick = () => {
-      if(replyInput.style.display === 'block') {
-        replyInput.style.display = 'none';
-        replyUsernameInput.style.display = 'none';
-        replySubmit.style.display = 'none';
-        replyInput.value = '';
-        replyUsernameInput.value = '';
-      } else {
-        replyInput.style.display = 'block';
-        replyUsernameInput.style.display = 'block';
-        replySubmit.style.display = 'inline-block';
-        replyInput.focus();
-      }
-    };
-
-    replySubmit.onclick = () => {
-      const replyText = replyInput.value.trim();
-      const replyUser = replyUsernameInput.value.trim() || '匿名';
-
-      if(!replyUser) {
-        alert(i18n[lang].alerts.replyUsernameEmpty);
-        replyUsernameInput.focus();
+    if (isLoginMode) {
+      // 登录逻辑
+      const foundUser = users.find(u => u.username === username);
+      if (!foundUser) {
+        setError('用户不存在');
         return;
       }
-      if(!replyText) {
-        alert(i18n[lang].alerts.replyEmpty);
-        replyInput.focus();
+      if (foundUser.password !== password) {
+        setError('密码错误');
         return;
       }
-
-      const targetComment = getCommentByPath(path);
-      if(!targetComment.replies) targetComment.replies = [];
-      targetComment.replies.push({
-        username: replyUser,
-        text: replyText,
-        timestamp: Date.now(),
-        likes: 0,
-        replies: []
-      });
-
-      saveComments();
-      renderComments();
-    };
-
-    return div;
-  }
-
-  // 删除评论/回复
-  function deleteCommentByPath(path) {
-    if(path.length === 1) {
-      comments.splice(path[0], 1);
+      // 登录成功
+      clearError();
+      alert(`登录成功，欢迎回来 ${username}！`);
+      // 跳转或加载主页面（示例，替换成你需要的逻辑）
+      window.location.reload();
     } else {
-      const lastIndex = path[path.length - 1];
-      const parent = getCommentByPath(path.slice(0, -1));
-      if(parent && parent.replies) {
-        parent.replies.splice(lastIndex, 1);
+      // 注册逻辑
+      if (users.some(u => u.username === username)) {
+        setError('用户名已存在');
+        return;
       }
+      users.push({ username, password });
+      saveUsers();
+      clearError();
+      alert('注册成功，请登录');
+      toggleMode(); // 自动切换回登录
     }
-  }
-
-  // 获取评论对象
-  function getCommentByPath(path) {
-    let current = comments;
-    for(let i = 0; i < path.length; i++) {
-      if(i === 0) {
-        current = current[path[i]];
-      } else {
-        current = current.replies[path[i]];
-      }
-      if(!current) break;
-    }
-    return current;
-  }
-
-  // 存储留言
-  function saveComments() {
-    localStorage.setItem('comments', JSON.stringify(comments));
-  }
-  // 存储动态
-  function savePosts() {
-    localStorage.setItem('posts', JSON.stringify(posts));
-  }
-
-  // 发布留言
-  commentSubmitBtn.addEventListener('click', () => {
-    const username = commentUsername.value.trim();
-    const text = commentInput.value.trim();
-
-    if(!username) {
-      alert(i18n[lang].alerts.usernameEmpty);
-      commentUsername.focus();
-      return;
-    }
-    if(!text) {
-      alert(i18n[lang].alerts.commentEmpty);
-      commentInput.focus();
-      return;
-    }
-
-    comments.unshift({
-      username,
-      text,
-      timestamp: Date.now(),
-      likes: 0,
-      replies: []
-    });
-
-    saveComments();
-    renderComments();
-
-    commentUsername.value = '';
-    commentInput.value = '';
   });
 
-  // 发布动态
-  postSubmitBtn.addEventListener('click', () => {
-    const username = postUsername.value.trim();
-    const text = postContent.value.trim();
-
-    if(!username) {
-      alert(i18n[lang].alerts.usernameEmpty);
-      postUsername.focus();
-      return;
+  function toggleMode() {
+    isLoginMode = !isLoginMode;
+    clearError();
+    if (isLoginMode) {
+      formTitle.textContent = '登录';
+      submitBtn.textContent = '登录';
+      toggleModeBtn.textContent = '还没有账号？点击注册';
+      passwordInput.setAttribute('autocomplete', 'current-password');
+    } else {
+      formTitle.textContent = '注册';
+      submitBtn.textContent = '注册';
+      toggleModeBtn.textContent = '已有账号？点击登录';
+      passwordInput.setAttribute('autocomplete', 'new-password');
     }
-    if(!text) {
-      alert(i18n[lang].alerts.postEmpty);
-      postContent.focus();
-      return;
+    usernameInput.value = '';
+    passwordInput.value = '';
+    usernameInput.focus();
+    toggleModeBtn.setAttribute('aria-pressed', !isLoginMode);
+  }
+
+  toggleModeBtn.addEventListener('click', toggleMode);
+  toggleModeBtn.addEventListener('keydown', e => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      toggleMode();
     }
-
-    posts.unshift({
-      username,
-      text,
-      timestamp: Date.now()
-    });
-
-    savePosts();
-    renderPosts();
-
-    postUsername.value = '';
-    postContent.value = '';
   });
-
-  // 初始渲染
-  renderPosts();
-  renderComments();
 </script>
+
 </body>
 </html>
