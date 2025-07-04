@@ -1,293 +1,857 @@
 <!DOCTYPE html>
-<html lang="zh-CN" >
+<html lang="zh-CN">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Cyn's 树洞站 - 登录 / 注册</title>
-  <style>
-    * {
-      box-sizing: border-box;
-    }
-    body, html {
-      margin: 0; padding: 0;
-      height: 100%;
-      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-      background: #e6f0f7;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      overflow: hidden;
-    }
-    .container {
-      display: flex;
-      width: 900px;
-      max-width: 95vw;
-      height: 600px;
-      border-radius: 20px;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.15);
-      overflow: hidden;
-      background: white;
-      user-select: none;
-    }
-    .welcome-section {
-      flex: 1.4;
-      background-image: url("https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80");
-      background-size: cover;
-      background-position: center;
-      position: relative;
-      color: #e6f0f7;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      padding: 40px 30px;
-      text-shadow: 0 0 10px rgba(0,0,0,0.6);
-    }
-    .welcome-section h1 {
-      font-size: 2.8rem;
-      margin-bottom: 12px;
-      font-weight: 900;
-    }
-    .welcome-section p {
-      font-size: 1.1rem;
-      line-height: 1.5;
-      font-weight: 500;
-      max-width: 280px;
-      opacity: 0.9;
-    }
-    .form-section {
-      flex: 1;
-      background: #f4f9ff;
-      padding: 50px 38px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      position: relative;
-    }
-    .form-section h2 {
-      margin: 0 0 30px 0;
-      color: #4a90e2;
-      font-weight: 800;
-      font-size: 2rem;
-      text-align: center;
-    }
-    label {
-      display: block;
-      margin-bottom: 6px;
-      font-weight: 600;
-      color: #4a90e2;
-      font-size: 0.95rem;
-    }
-    input[type="text"], input[type="password"] {
-      width: 100%;
-      padding: 12px 16px;
-      margin-bottom: 22px;
-      border: 2px solid #a9c0e0;
-      border-radius: 14px;
-      font-size: 1rem;
-      font-family: inherit;
-      color: #2f3e4d;
-      background: #f8fbff;
-      transition: border-color 0.3s ease, box-shadow 0.3s ease;
-    }
-    input[type="text"]:focus, input[type="password"]:focus {
-      border-color: #4a90e2;
-      box-shadow: 0 0 8px rgba(74, 144, 226, 0.5);
-      outline: none;
-      background: white;
-    }
-    button {
-      background-color: #4a90e2;
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>悄悄话</title>
+<style>
+  /* 基础与重置 */
+  * {
+    box-sizing: border-box;
+  }
+  body {
+    margin: 0; padding: 0;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    user-select: none;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+  a {
+    color: var(--link);
+    text-decoration: none;
+  }
+  a:hover {
+    text-decoration: underline;
+  }
+  /* 主题变量 */
+  :root {
+    --bg: #f5f8fa;
+    --text: #222;
+    --link: #1da1f2;
+    --border: #e1e8ed;
+    --btn-bg: #1da1f2;
+    --btn-hover: #0d95e8;
+    --input-bg: #fff;
+    --input-border: #ccd6dd;
+    --post-bg: #fff;
+    --like-color: #e0245e;
+  }
+  .dark {
+    --bg: #15202b;
+    --text: #e1e8ed;
+    --link: #1da1f2;
+    --border: #38444d;
+    --btn-bg: #1da1f2;
+    --btn-hover: #0d95e8;
+    --input-bg: #192734;
+    --input-border: #38444d;
+    --post-bg: #192734;
+    --like-color: #f91880;
+  }
+
+  #app {
+    max-width: 600px;
+    margin: 20px auto;
+    background: var(--post-bg);
+    border: 1px solid var(--border);
+    box-shadow: 0 1px 3px rgb(0 0 0 / 0.1);
+    display: flex;
+    flex-direction: column;
+    min-height: 80vh;
+  }
+
+  header {
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--border);
+    font-weight: 700;
+    font-size: 1.3rem;
+    color: var(--link);
+    user-select: text;
+    background: var(--post-bg);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  #modeToggleBtn {
+    background: transparent;
+    border: none;
+    color: var(--link);
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.9rem;
+    user-select: none;
+  }
+  #modeToggleBtn:hover {
+    text-decoration: underline;
+  }
+
+  /* 登录区 */
+  #loginSection {
+    padding: 24px 20px;
+    display: flex;
+    flex-direction: column;
+  }
+  #loginSection h2 {
+    margin: 0 0 18px 0;
+    font-weight: 700;
+    font-size: 1.4rem;
+    color: var(--text);
+  }
+  #loginSection form {
+    display: flex;
+    flex-direction: column;
+  }
+  #loginSection label {
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: #657786;
+    font-size: 0.9rem;
+  }
+  #loginSection input {
+    padding: 12px 14px;
+    margin-bottom: 16px;
+    border: 1px solid var(--input-border);
+    font-size: 1rem;
+    outline: none;
+    user-select: text;
+    border-radius: 0;
+    background: var(--input-bg);
+    color: var(--text);
+    transition: border-color 0.2s ease;
+  }
+  #loginSection input:focus {
+    border-color: var(--link);
+  }
+  #loginSection button {
+    background: var(--btn-bg);
+    border: none;
+    color: white;
+    padding: 12px 0;
+    font-weight: 700;
+    font-size: 1.1rem;
+    cursor: pointer;
+    border-radius: 0;
+    transition: background-color 0.25s ease;
+  }
+  #loginSection button:hover,
+  #loginSection button:focus {
+    background: var(--btn-hover);
+  }
+  #loginError {
+    color: #e0245e;
+    margin-bottom: 16px;
+    min-height: 20px;
+    font-weight: 600;
+  }
+  #toggleLogin {
+    margin-top: 8px;
+    text-align: center;
+    font-size: 0.9rem;
+    color: var(--link);
+    cursor: pointer;
+    user-select: none;
+  }
+  #toggleLogin:hover,
+  #toggleLogin:focus {
+    text-decoration: underline;
+  }
+
+  /* 主内容区 */
+  #mainSection {
+    display: none;
+    flex: 1;
+    flex-direction: column;
+    padding: 16px 20px;
+    overflow-y: auto;
+  }
+  #welcomeUser {
+    font-weight: 700;
+    font-size: 1.15rem;
+    margin-bottom: 20px;
+    user-select: text;
+  }
+  #logoutBtn {
+    background: transparent;
+    border: none;
+    color: var(--link);
+    font-weight: 600;
+    font-size: 0.95rem;
+    cursor: pointer;
+    margin-bottom: 18px;
+    padding: 0;
+    align-self: flex-start;
+  }
+  #logoutBtn:hover,
+  #logoutBtn:focus {
+    text-decoration: underline;
+  }
+
+  /* 发帖区域 */
+  #postForm {
+    border: 1px solid var(--border);
+    padding: 12px;
+    margin-bottom: 24px;
+    display: flex;
+    flex-direction: column;
+    background: var(--post-bg);
+  }
+  #postText {
+    width: 100%;
+    border: 1px solid var(--border);
+    resize: vertical;
+    min-height: 80px;
+    padding: 12px;
+    font-size: 1rem;
+    font-family: inherit;
+    outline: none;
+    border-radius: 0;
+    background: var(--input-bg);
+    color: var(--text);
+    transition: border-color 0.25s ease;
+  }
+  #postText:focus {
+    border-color: var(--link);
+  }
+  #postImages {
+    margin-top: 14px;
+    width: 100%;
+    cursor: pointer;
+  }
+  #postSubmitBtn {
+    margin-top: 16px;
+    background: var(--btn-bg);
+    border: none;
+    color: white;
+    padding: 12px 0;
+    font-weight: 700;
+    font-size: 1.05rem;
+    cursor: pointer;
+    border-radius: 0;
+    transition: background-color 0.25s ease;
+  }
+  #postSubmitBtn:hover,
+  #postSubmitBtn:focus {
+    background: var(--btn-hover);
+  }
+
+  /* 图片预览 */
+  #imagePreview {
+    margin-top: 12px;
+    display: flex;
+    gap: 12px;
+    overflow-x: auto;
+  }
+  #imagePreview img {
+    height: 60px;
+    border: 1px solid var(--input-border);
+    object-fit: cover;
+  }
+
+  /* 动态列表 */
+  #postsList {
+    flex: 1;
+    overflow-y: auto;
+  }
+  .post {
+    border-bottom: 1px solid var(--border);
+    padding: 14px 0;
+  }
+  .post-header {
+    font-weight: 700;
+    color: var(--link);
+    margin-bottom: 6px;
+    user-select: text;
+  }
+  .post-time {
+    font-size: 0.85rem;
+    color: #657786;
+    margin-bottom: 10px;
+    user-select: none;
+  }
+  .post-text {
+    white-space: pre-wrap;
+    font-size: 1rem;
+    margin-bottom: 12px;
+  }
+  .post-images img {
+    max-width: 100%;
+    margin-bottom: 12px;
+    border: 1px solid var(--input-border);
+    border-radius: 0;
+    object-fit: contain;
+  }
+
+  /* 点赞和评论 */
+  .post-actions {
+    display: flex;
+    gap: 20px;
+    font-size: 0.9rem;
+    color: #657786;
+    cursor: pointer;
+    user-select: none;
+  }
+  .post-actions span {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .post-actions .like {
+    color: #657786;
+    transition: color 0.3s ease;
+  }
+  .post-actions .like.liked {
+    color: var(--like-color);
+    font-weight: 700;
+  }
+  .post-actions svg {
+    width: 16px;
+    height: 16px;
+    fill: currentColor;
+  }
+
+  /* 评论区 */
+  .comments {
+    margin-top: 10px;
+    border-top: 1px solid var(--border);
+    padding-top: 8px;
+  }
+  .comment {
+    font-size: 0.9rem;
+    margin-bottom: 6px;
+    user-select: text;
+  }
+  .comment strong {
+    color: var(--link);
+  }
+  .add-comment {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+  }
+  .add-comment input {
+    flex: 1;
+    padding: 6px 10px;
+    font-size: 0.9rem;
+    border: 1px solid var(--input-border);
+    border-radius: 2px;
+    outline: none;
+    background: var(--input-bg);
+    color: var(--text);
+  }
+  .add-comment input:focus {
+    border-color: var(--link);
+  }
+  .add-comment button {
+    padding: 6px 12px;
+    font-weight: 600;
+    border: none;
+    background: var(--btn-bg);
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  .add-comment button:hover {
+    background: var(--btn-hover);
+  }
+
+  /* 响应式 */
+  @media (max-width: 640px) {
+    #app {
+      margin: 10px 8px;
+      max-width: 100%;
+      min-height: 100vh;
       border: none;
-      color: #e6f0f7;
-      font-weight: 700;
-      font-size: 1.1rem;
-      padding: 14px 0;
-      border-radius: 18px;
-      cursor: pointer;
-      box-shadow: 0 3px 6px rgba(74, 144, 226, 0.5);
-      transition: background-color 0.25s ease, box-shadow 0.25s ease;
-      user-select: none;
-      margin-top: 10px;
-      width: 100%;
+      box-shadow: none;
     }
-    button:hover, button:focus {
-      background-color: #2e66c7;
-      box-shadow: 0 6px 14px rgba(46, 102, 199, 0.8);
-      outline: none;
-    }
-    .toggle-text {
-      margin-top: 18px;
-      font-size: 0.9rem;
-      color: #4a90e2;
-      text-align: center;
-      cursor: pointer;
-      user-select: none;
-      transition: color 0.3s ease;
-    }
-    .toggle-text:hover {
-      color: #2e66c7;
-      text-decoration: underline;
-    }
-    .error-msg {
-      color: #d94f4f;
-      font-weight: 700;
-      margin-bottom: 16px;
-      text-align: center;
-      min-height: 20px;
-      user-select: none;
-    }
-    @media (max-width: 750px) {
-      .container {
-        flex-direction: column;
-        height: auto;
-      }
-      .welcome-section {
-        flex: none;
-        height: 240px;
-        border-radius: 20px 20px 0 0;
-        text-align: center;
-        padding: 30px 24px;
-      }
-      .form-section {
-        flex: none;
-        padding: 32px 24px 48px;
-        border-radius: 0 0 20px 20px;
-      }
-    }
-  </style>
+  }
+</style>
 </head>
 <body>
 
-<div class="container" role="main" aria-label="登录和注册界面">
-  <section class="welcome-section" aria-label="欢迎区域">
-    <h1>欢迎来到 Cyn's 树洞</h1>
-    <p>在这里，你可以写下心声，秘密安全保存。<br>现在，先登录或者创建你的账号开始吧！</p>
-  </section>
+<div id="app" role="main" aria-label="简约微博树洞应用">
 
-  <section class="form-section" aria-label="账号操作区域">
-    <h2 id="formTitle">登录</h2>
-    <div class="error-msg" id="errorMsg" aria-live="assertive"></div>
-    <form id="authForm" novalidate>
+  <header>
+    对Cyn说的悄悄话
+    <button id="modeToggleBtn" aria-label="切换夜间/日间模式">切换夜间模式</button>
+  </header>
+
+  <!-- 登录区 -->
+  <section id="loginSection" aria-label="用户登录注册">
+    <h2 id="loginTitle">用户登录</h2>
+    <div id="loginError" role="alert" aria-live="assertive"></div>
+    <form id="loginForm" novalidate>
       <label for="usernameInput">用户名</label>
-      <input type="text" id="usernameInput" name="username" autocomplete="username" required aria-required="true" aria-describedby="usernameHelp" />
+      <input
+        type="text"
+        id="usernameInput"
+        autocomplete="username"
+        required minlength="3" maxlength="16"
+        pattern="[a-zA-Z0-9_-]+"
+        aria-describedby="usernameDesc"
+        aria-invalid="false"
+      />
+      <div id="usernameDesc" style="font-size:0.8rem; color:#657786; margin-bottom:10px;">
+        3-16位字母、数字、下划线或短横线
+      </div>
       <label for="passwordInput">密码</label>
-      <input type="password" id="passwordInput" name="password" autocomplete="current-password" required aria-required="true" />
-      <button type="submit" id="submitBtn">登录</button>
+      <input
+        type="password"
+        id="passwordInput"
+        autocomplete="current-password"
+        required minlength="6"
+        aria-describedby="passwordDesc"
+        aria-invalid="false"
+      />
+      <div id="passwordDesc" style="font-size:0.8rem; color:#657786; margin-bottom:10px;">
+        至少6位
+      </div>
+      <button type="submit" id="loginBtn" aria-live="polite" aria-label="提交登录或注册表单">登录</button>
     </form>
-    <div class="toggle-text" id="toggleMode" role="button" tabindex="0" aria-pressed="false" aria-label="切换注册和登录">
-      还没有账号？点击注册
+    <div id="toggleLogin" role="button" tabindex="0" aria-pressed="false" aria-label="切换登录或注册">
+      没有账号？点击注册
     </div>
   </section>
+
+  <!-- 主内容区 -->
+  <section id="mainSection" aria-label="用户主页内容">
+    <div id="welcomeUser" tabindex="0" aria-live="polite"></div>
+    <button id="logoutBtn" aria-label="登出">登出</button>
+
+    <form id="postForm" aria-label="发布动态表单" novalidate>
+      <textarea
+        id="postText"
+        placeholder="有什么新鲜事？（最多280字）"
+        aria-label="动态内容"
+        maxlength="280"
+      ></textarea>
+      <input type="file" id="postImages" accept="image/*" multiple aria-label="上传图片" />
+      <div id="imagePreview" aria-live="polite" aria-label="图片预览区"></div>
+      <button type="submit" id="postSubmitBtn">发布</button>
+    </form>
+
+    <div id="postsList" aria-live="polite" aria-label="动态列表"></div>
+  </section>
+
 </div>
 
 <script>
-  // 本地存储账户（注意：仅示范，非安全方案）
-  // 账户结构： { username: string, password: string }
-  const STORAGE_KEY = 'treehole_users';
-  let users = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+  const STORAGE_USERS = 'weibo_users';
+  const STORAGE_POSTS_PREFIX = 'weibo_posts_'; // + username
 
-  const authForm = document.getElementById('authForm');
-  const usernameInput = document.getElementById('usernameInput');
-  const passwordInput = document.getElementById('passwordInput');
-  const errorMsg = document.getElementById('errorMsg');
-  const formTitle = document.getElementById('formTitle');
-  const submitBtn = document.getElementById('submitBtn');
-  const toggleModeBtn = document.getElementById('toggleMode');
-
+  let users = JSON.parse(localStorage.getItem(STORAGE_USERS) || '[]');
+  let currentUser = null;
   let isLoginMode = true;
 
-  function setError(msg) {
-    errorMsg.textContent = msg;
-  }
+  // DOM
+  const loginSection = document.getElementById('loginSection');
+  const mainSection = document.getElementById('mainSection');
+  const loginForm = document.getElementById('loginForm');
+  const loginError = document.getElementById('loginError');
+  const loginTitle = document.getElementById('loginTitle');
+  const toggleLogin = document.getElementById('toggleLogin');
+  const usernameInput = document.getElementById('usernameInput');
+  const passwordInput = document.getElementById('passwordInput');
+  const loginBtn = document.getElementById('loginBtn');
 
-  function clearError() {
-    errorMsg.textContent = '';
-  }
+  const welcomeUser = document.getElementById('welcomeUser');
+  const logoutBtn = document.getElementById('logoutBtn');
+  const postForm = document.getElementById('postForm');
+  const postText = document.getElementById('postText');
+  const postImages = document.getElementById('postImages');
+  const imagePreview = document.getElementById('imagePreview');
+  const postsList = document.getElementById('postsList');
 
+  const modeToggleBtn = document.getElementById('modeToggleBtn');
+
+  // 读取用户主题偏好
+  function loadTheme() {
+    const theme = localStorage.getItem('weibo_theme') || 'light';
+    if (theme === 'dark') {
+      document.documentElement.classList.add('dark');
+      modeToggleBtn.textContent = '切换日间模式';
+    } else {
+      document.documentElement.classList.remove('dark');
+      modeToggleBtn.textContent = '切换夜间模式';
+    }
+  }
+  loadTheme();
+
+  modeToggleBtn.addEventListener('click', () => {
+    document.documentElement.classList.toggle('dark');
+    if (document.documentElement.classList.contains('dark')) {
+      localStorage.setItem('weibo_theme', 'dark');
+      modeToggleBtn.textContent = '切换日间模式';
+    } else {
+      localStorage.setItem('weibo_theme', 'light');
+      modeToggleBtn.textContent = '切换夜间模式';
+    }
+  });
+
+  // 存储与加载
   function saveUsers() {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(users));
+    localStorage.setItem(STORAGE_USERS, JSON.stringify(users));
+  }
+  function loadPosts(username) {
+    return JSON.parse(localStorage.getItem(STORAGE_POSTS_PREFIX + username) || '[]');
+  }
+  function savePosts(username, posts) {
+    localStorage.setItem(STORAGE_POSTS_PREFIX + username, JSON.stringify(posts));
   }
 
-  function validateUsername(username) {
-    return /^[a-zA-Z0-9_-]{3,16}$/.test(username);
+  // 登录/注册流程
+  toggleLogin.addEventListener('click', toggleLoginMode);
+  toggleLogin.addEventListener('keypress', e => {
+    if (e.key === 'Enter' || e.key === ' ') toggleLoginMode();
+  });
+  function toggleLoginMode() {
+    isLoginMode = !isLoginMode;
+    loginTitle.textContent = isLoginMode ? '用户登录' : '新用户注册';
+    loginBtn.textContent = isLoginMode ? '登录' : '注册';
+    toggleLogin.textContent = isLoginMode ? '没有账号？点击注册' : '已有账号？点击登录';
+    loginError.textContent = '';
+    usernameInput.value = '';
+    passwordInput.value = '';
+    usernameInput.setAttribute('aria-invalid', 'false');
+    passwordInput.setAttribute('aria-invalid', 'false');
+    usernameInput.focus();
   }
 
-  function validatePassword(password) {
-    return password.length >= 6;
-  }
-
-  authForm.addEventListener('submit', e => {
+  loginForm.addEventListener('submit', e => {
     e.preventDefault();
-    clearError();
+    loginError.textContent = '';
+
     const username = usernameInput.value.trim();
     const password = passwordInput.value;
 
-    if (!validateUsername(username)) {
-      setError('用户名需3-16位，只允许字母数字、下划线和短横线');
+    // 简单校验
+    if (!username || !password) {
+      loginError.textContent = '请输入用户名和密码';
+      if (!username) usernameInput.setAttribute('aria-invalid', 'true');
+      if (!password) passwordInput.setAttribute('aria-invalid', 'true');
       return;
     }
-    if (!validatePassword(password)) {
-      setError('密码至少6位');
+    if (!/^[a-zA-Z0-9_-]{3,16}$/.test(username)) {
+      loginError.textContent = '用户名格式不正确，3-16位字母数字_-';
+      usernameInput.setAttribute('aria-invalid', 'true');
       return;
     }
+    if (password.length < 6) {
+      loginError.textContent = '密码至少6位';
+      passwordInput.setAttribute('aria-invalid', 'true');
+      return;
+    }
+    usernameInput.setAttribute('aria-invalid', 'false');
+    passwordInput.setAttribute('aria-invalid', 'false');
 
     if (isLoginMode) {
-      // 登录逻辑
-      const foundUser = users.find(u => u.username === username);
-      if (!foundUser) {
-        setError('用户不存在');
+      // 登录
+      const user = users.find(u => u.username === username);
+      if (!user) {
+        loginError.textContent = '用户不存在，请先注册';
+        usernameInput.setAttribute('aria-invalid', 'true');
         return;
       }
-      if (foundUser.password !== password) {
-        setError('密码错误');
+      if (user.password !== password) {
+        loginError.textContent = '密码错误';
+        passwordInput.setAttribute('aria-invalid', 'true');
         return;
       }
-      // 登录成功
-      clearError();
-      alert(`登录成功，欢迎回来 ${username}！`);
-      // 跳转或加载主页面（示例，替换成你需要的逻辑）
-      window.location.reload();
+      // 成功登录
+      currentUser = username;
+      afterLogin();
     } else {
-      // 注册逻辑
+      // 注册
       if (users.some(u => u.username === username)) {
-        setError('用户名已存在');
+        loginError.textContent = '用户名已被占用';
+        usernameInput.setAttribute('aria-invalid', 'true');
         return;
       }
       users.push({ username, password });
       saveUsers();
-      clearError();
-      alert('注册成功，请登录');
-      toggleMode(); // 自动切换回登录
+      currentUser = username;
+      afterLogin();
     }
   });
 
-  function toggleMode() {
-    isLoginMode = !isLoginMode;
-    clearError();
-    if (isLoginMode) {
-      formTitle.textContent = '登录';
-      submitBtn.textContent = '登录';
-      toggleModeBtn.textContent = '还没有账号？点击注册';
-      passwordInput.setAttribute('autocomplete', 'current-password');
-    } else {
-      formTitle.textContent = '注册';
-      submitBtn.textContent = '注册';
-      toggleModeBtn.textContent = '已有账号？点击登录';
-      passwordInput.setAttribute('autocomplete', 'new-password');
-    }
-    usernameInput.value = '';
-    passwordInput.value = '';
-    usernameInput.focus();
-    toggleModeBtn.setAttribute('aria-pressed', !isLoginMode);
+  // 登录后初始化
+  function afterLogin() {
+    loginSection.style.display = 'none';
+    mainSection.style.display = 'flex';
+    welcomeUser.textContent = `欢迎你，${currentUser}！`;
+    postText.value = '';
+    postImages.value = '';
+    imagePreview.innerHTML = '';
+    renderPosts();
   }
 
-  toggleModeBtn.addEventListener('click', toggleMode);
-  toggleModeBtn.addEventListener('keydown', e => {
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault();
-      toggleMode();
+  // 登出
+  logoutBtn.addEventListener('click', () => {
+    currentUser = null;
+    loginSection.style.display = 'flex';
+    mainSection.style.display = 'none';
+    loginError.textContent = '';
+    toggleLoginMode(true);
+  });
+
+  // 预览图片功能，限制最多5张
+  postImages.addEventListener('change', () => {
+    imagePreview.innerHTML = '';
+    const files = Array.from(postImages.files).slice(0, 5);
+    if (postImages.files.length > 6) alert('最多只能上传6张图片');
+    files.forEach(file => {
+      if (!file.type.startsWith('image/')) return;
+      const reader = new FileReader();
+      reader.onload = e => {
+        const img = document.createElement('img');
+        img.src = e.target.result;
+        img.alt = '上传图片预览';
+        imagePreview.appendChild(img);
+      };
+      reader.readAsDataURL(file);
+    });
+  });
+
+  // 发布帖子
+  postForm.addEventListener('submit', e => {
+    e.preventDefault();
+    if (!currentUser) return alert('请先登录');
+    const text = postText.value.trim();
+    if (text.length === 0) {
+      alert('请输入内容');
+      return;
+    }
+    if (text.length > 280) {
+      alert('内容最多280字');
+      return;
+    }
+    // 读取图片base64
+    const files = Array.from(postImages.files).slice(0, 5);
+    if (files.some(f => !f.type.startsWith('image/'))) {
+      alert('只能上传图片文件');
+      return;
+    }
+    if (files.length > 5) {
+      alert('最多上传5张图片');
+      return;
+    }
+    if (files.length === 0) {
+      savePost({ text, images: [] });
+    } else {
+      let loaded = 0;
+      const images = [];
+      files.forEach(file => {
+        const reader = new FileReader();
+        reader.onload = e => {
+          images.push(e.target.result);
+          loaded++;
+          if (loaded === files.length) {
+            savePost({ text, images });
+          }
+        };
+        reader.readAsDataURL(file);
+      });
     }
   });
+
+  // 保存帖子
+  function savePost({ text, images }) {
+    const posts = loadPosts(currentUser);
+    const newPost = {
+      id: Date.now(),
+      text,
+      images,
+      timestamp: Date.now(),
+      likes: 0,
+      likedBy: [],
+      comments: []
+    };
+    posts.unshift(newPost);
+    savePosts(currentUser, posts);
+    postText.value = '';
+    postImages.value = '';
+    imagePreview.innerHTML = '';
+    renderPosts();
+  }
+
+  // 渲染帖子列表
+  function renderPosts() {
+    const posts = loadPosts(currentUser);
+    postsList.innerHTML = '';
+    if (posts.length === 0) {
+      postsList.innerHTML = '<p style="color:#657786; text-align:center; padding: 40px 0;">这里还没有动态，快发布第一条吧！</p>';
+      return;
+    }
+    posts.forEach(post => {
+      const postEl = document.createElement('article');
+      postEl.className = 'post';
+      postEl.setAttribute('tabindex', '0');
+      // 时间格式
+      const timeStr = formatTime(post.timestamp);
+      let html = `<div class="post-header" aria-label="发布用户">${escapeHTML(currentUser)}</div>`;
+      html += `<div class="post-time" title="${new Date(post.timestamp).toLocaleString()}">${timeStr}</div>`;
+      html += `<div class="post-text">${escapeHTML(post.text).replace(/\n/g, '<br>')}</div>`;
+      if (post.images.length > 0) {
+        html += '<div class="post-images">';
+        post.images.forEach(img => {
+          html += `<img src="${img}" alt="动态图片" loading="lazy" />`;
+        });
+        html += '</div>';
+      }
+
+      // 点赞按钮
+      const liked = post.likedBy.includes(currentUser);
+      html += `
+        <div class="post-actions" aria-label="动态操作">
+          <span class="like ${liked ? 'liked' : ''}" role="button" tabindex="0" aria-pressed="${liked}" aria-label="点赞按钮，当前${liked ? '已点赞' : '未点赞'}，点赞数${post.likes}" data-id="${post.id}">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41 0.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+            <span>${post.likes}</span>
+          </span>
+          <span class="commentToggle" role="button" tabindex="0" aria-label="显示或隐藏评论" data-id="${post.id}">评论(${post.comments.length})</span>
+        </div>
+      `;
+
+      // 评论区
+      html += `<section class="comments" id="comments-${post.id}" aria-live="polite" hidden>`;
+      post.comments.forEach(cmt => {
+        html += `<div class="comment"><strong>${escapeHTML(cmt.user)}</strong>: ${escapeHTML(cmt.text)}</div>`;
+      });
+      html += `
+        <form class="add-comment" data-id="${post.id}" aria-label="添加评论">
+          <input type="text" aria-label="评论输入框" maxlength="100" placeholder="写评论..." required />
+          <button type="submit" aria-label="提交评论">发送</button>
+        </form>
+      </section>`;
+
+      postEl.innerHTML = html;
+      postsList.appendChild(postEl);
+    });
+
+    // 绑定点赞事件
+    document.querySelectorAll('.post-actions .like').forEach(el => {
+      el.onclick = toggleLike;
+      el.onkeydown = e => { if(e.key==='Enter'||e.key===' ') toggleLike.call(el,e); };
+    });
+    // 绑定评论展开事件
+    document.querySelectorAll('.post-actions .commentToggle').forEach(el => {
+      el.onclick = toggleComments;
+      el.onkeydown = e => { if(e.key==='Enter'||e.key===' ') toggleComments.call(el,e); };
+    });
+    // 绑定评论表单提交事件
+    document.querySelectorAll('.add-comment').forEach(form => {
+      form.onsubmit = submitComment;
+    });
+
+    // 自动滚动最新动态到顶部
+    if(postsList.lastChild) postsList.lastChild.scrollIntoView({behavior: 'smooth'});
+  }
+
+  // 点赞处理
+  function toggleLike(e) {
+    const postId = Number(this.dataset.id);
+    let posts = loadPosts(currentUser);
+    const idx = posts.findIndex(p => p.id === postId);
+    if (idx < 0) return;
+    const post = posts[idx];
+    const liked = post.likedBy.includes(currentUser);
+    if (liked) {
+      post.likes--;
+      post.likedBy = post.likedBy.filter(u => u !== currentUser);
+    } else {
+      post.likes++;
+      post.likedBy.push(currentUser);
+    }
+    savePosts(currentUser, posts);
+    renderPosts();
+  }
+
+  // 评论区显示/隐藏切换
+  function toggleComments(e) {
+    const postId = Number(this.dataset.id);
+    const section = document.getElementById('comments-' + postId);
+    if (!section) return;
+    if (section.hasAttribute('hidden')) {
+      section.removeAttribute('hidden');
+      this.setAttribute('aria-expanded', 'true');
+    } else {
+      section.setAttribute('hidden', '');
+      this.setAttribute('aria-expanded', 'false');
+    }
+  }
+
+  // 发表评论处理
+  function submitComment(e) {
+    e.preventDefault();
+    const form = e.target;
+    const postId = Number(form.dataset.id);
+    const input = form.querySelector('input[type=text]');
+    const commentText = input.value.trim();
+    if (!commentText) return alert('评论不能为空');
+
+    let posts = loadPosts(currentUser);
+    const idx = posts.findIndex(p => p.id === postId);
+    if (idx < 0) return;
+    posts[idx].comments.push({ user: currentUser, text: commentText });
+    savePosts(currentUser, posts);
+    renderPosts();
+  }
+
+  // 格式化时间（类似微博时间显示）
+  function formatTime(timestamp) {
+    const now = Date.now();
+    const diff = (now - timestamp) / 1000;
+    if (diff < 60) return '刚刚';
+    if (diff < 3600) return Math.floor(diff / 60) + '分钟前';
+    if (diff < 86400) return Math.floor(diff / 3600) + '小时前';
+    const date = new Date(timestamp);
+    const nowDate = new Date(now);
+    if (date.getFullYear() === nowDate.getFullYear()) {
+      return date.toLocaleDateString('zh-CN', { month: 'numeric', day: 'numeric' });
+    }
+    return date.toLocaleDateString();
+  }
+
+  function deleteComment(e) {
+    e.preventDefault();
+    const btn = this;
+    const postId = Number(btn.dataset.postid);
+    const cmtIdx = Number(btn.dataset.cmtidx);
+    let posts = loadPosts(currentUser);
+    const postIndex = posts.findIndex(p => p.id === postId);
+    if (postIndex < 0) return;
+
+    // 只允许删除自己评论，安全检查
+    const comment = posts[postIndex].comments[cmtIdx];
+    if (!comment || comment.user !== currentUser) {
+      alert('无权限删除该评论');
+      return;
+    }
+
+    // 删除评论
+    posts[postIndex].comments.splice(cmtIdx, 1);
+    savePosts(currentUser, posts);
+    renderPosts();
+  }
+
+
+  // XSS 逃逸
+  function escapeHTML(str) {
+    return str.replace(/[&<>"']/g, c => ({
+      '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'
+    })[c]);
+  }
+
+  // 初始显示登录区
+  function init() {
+    currentUser = null;
+    isLoginMode = true;
+    loginSection.style.display = 'flex';
+    mainSection.style.display = 'none';
+    toggleLoginMode();
+  }
+  init();
 </script>
 
 </body>
